@@ -4,10 +4,10 @@ import Link from 'next/link';
 import { Fragment } from 'react';
 
 const navigation = [
-    { name: 'Features', href: '#' },
-    { name: 'Pricing', href: '#' },
-    { name: 'About', href: '#' },
-    { name: 'Contact', href: '#' },
+    { name: 'Funcionalidades', href: '#' },
+    { name: 'Dispositivos', href: '#' },
+    { name: 'Suscripciones', href: '#' },
+    { name: 'Contacto', href: '#' },
 ];
 
 export default function Navbar({ openModal }) {
@@ -15,30 +15,34 @@ export default function Navbar({ openModal }) {
         <Popover>
             <div className="relative pt-6 px-4 sm:px-6 lg:px-8">
                 <nav className="relative flex items-center justify-between sm:h-10 lg:justify-start" aria-label="Global">
+                    {/* Logo a la izquierda */}
                     <div className="flex items-center justify-start space-x-4 lg:flex-grow">
-                        <img className="h-8 w-auto" src="/images/logo-arrow.png" alt="Icono" />
-                        <a href="#">
-                            <span className="sr-only">Workflow</span>
-                            <img className="h-8 w-auto sm:h-10" src="" alt="" />
-                        </a>
-                        <div className="hidden md:flex md:space-x-8">
-                            {navigation.map((item) => (
-                                <Link key={item.name} href={item.href}>
-                                    <span className="font-medium text-gray-300 hover:text-white">{item.name}</span>
-                                </Link>
-                            ))}
+                        <div className="bg-blue-500 p-2 rounded-full">
+                            <img className="h-8 w-8" src="/svg/fork.svg" alt="Icono" />
                         </div>
+                        <span className="font-bold text-gray-900">Tu Resto</span>
                     </div>
 
-                    <div className="hidden md:flex md:items-center md:space-x-4 ml-auto">
-                            <button onClick={openModal} className="bg-primary text-white font-medium px-4 py-2 rounded-md hover:bg-secondary">
-                                Iniciar Sesión
-                            </button>
-                            <button className="bg-gray-800 text-white font-medium px-4 py-2 rounded-md hover:bg-gray-700">
-                                Registrarse
-                            </button>
+                    {/* Links del menú */}
+                    <div className="hidden md:flex md:space-x-8 ml-auto">
+                        {navigation.map((item) => (
+                            <Link key={item.name} href={item.href}>
+                                <span className="font-medium text-gray-700 hover:text-secondary">{item.name}</span>
+                            </Link>
+                        ))}
                     </div>
 
+                    {/* Botón "Ingresar" */}
+                    <div className="hidden pl-10 md:flex md:items-center md:space-x-4">
+                        <button
+                            onClick={openModal}
+                            className="bg-blue-500 text-white font-medium px-4 py-2 rounded-full hover:bg-blue-600"
+                        >
+                            Ingresar
+                        </button>
+                    </div>
+
+                    {/* Botón del menú móvil */}
                     <div className="-mr-2 flex items-center md:hidden">
                         <Popover.Button className="bg-gray-900 rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                             <span className="sr-only">Open main menu</span>
@@ -48,6 +52,7 @@ export default function Navbar({ openModal }) {
                 </nav>
             </div>
 
+            {/* Menú móvil */}
             <Transition
                 as={Fragment}
                 enter="duration-150 ease-out"
@@ -61,7 +66,7 @@ export default function Navbar({ openModal }) {
                     <div className="rounded-lg shadow-md bg-gray-800 ring-1 ring-black ring-opacity-5 overflow-hidden">
                         <div className="px-5 pt-4 flex items-center justify-between">
                             <div>
-                                <img className="h-8 w-auto" src="/images/logo-arrow.png" alt="" />
+                                <img className="h-8 w-auto" src="/images/logo-arrow.png" alt="Icono" />
                             </div>
                             <div className="-mr-2">
                                 <Popover.Button className="bg-gray-900 rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
@@ -73,9 +78,9 @@ export default function Navbar({ openModal }) {
                         <div className="mt-3 px-2 space-y-1">
                             {navigation.map((item) => (
                                 <Link key={item.name} href={item.href}>
-              <span className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">
-                {item.name}
-              </span>
+                                    <span className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">
+                                        {item.name}
+                                    </span>
                                 </Link>
                             ))}
                         </div>
@@ -83,6 +88,5 @@ export default function Navbar({ openModal }) {
                 </Popover.Panel>
             </Transition>
         </Popover>
-
     );
 }

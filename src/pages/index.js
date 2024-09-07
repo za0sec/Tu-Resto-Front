@@ -4,6 +4,7 @@ import HeroSection from './components/HeroSection';
 import CountersSection from './components/CountersSection';
 import LoginModal from "./components/LoginModal";
 import { useRouter } from "next/router";
+import Subscription from './components/Subscription';
 
 export default function Home({ token = true }) {
     const router = useRouter();
@@ -30,14 +31,17 @@ export default function Home({ token = true }) {
 
     return (
         <div className="bg-gray-100 overflow-hidden min-h-screen flex flex-col px-4 sm:px-6 lg:px-24">
-            <div className="sticky top-0 z-50">
-                <Navbar openModal={openModal} />
+            <div className="sticky top-0 z-50 w-full shadow-md">
+                <div className="max-w-7xl mx-auto py-4">
+                    <Navbar openModal={openModal} />
+                </div>
             </div>
             <div className="w-full">
                 <div className="relative z-10 pb-8 bg-gray-100 rounded-lg sm:pb-16 md:pb-20 lg:pb-28 xl:pb-32">
                     <HeroSection openModal={openModal} />
                     <br /><br />
                     <CountersSection visitedClients={visitedClients} counter1={counter1} counter2={counter2} counter3={counter3} />
+                    <Subscription />
                 </div>
             </div>
             <LoginModal isOpen={isModalOpen} closeModal={closeModal} />
