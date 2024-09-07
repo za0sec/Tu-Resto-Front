@@ -1,5 +1,5 @@
-import { useState, Fragment } from 'react';
-import {Popover, Transition, Dialog, Menu, Button} from '@headlessui/react';
+import { useEffect, useState, Fragment } from 'react';
+import { Popover, Transition, Dialog, Menu, Button } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import Cookies from "js-cookie";
@@ -13,10 +13,11 @@ const navigation = [
     { name: 'Help', href: '/help' },
 ];
 
-export default function DashboardNavbar({ user }) {
+export default function DashboardNavbar() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const router = useRouter();
-
+    const [firstName, setFirstName] = useState(null);
+    const [lastName, setLastName] = useState(null);
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
 
@@ -30,6 +31,24 @@ export default function DashboardNavbar({ user }) {
         window.location.href = '/';
     };
 
+    const fetchUserName = () => {
+        const first_name = Cookies.get('user_first_name');
+        const last_name = Cookies.get('user_last_name');
+        if (first_name) {
+            try {
+                setFirstName(first_name);
+                setLastName(last_name);
+            } catch (error) {
+                console.error('Error al analizar el nombre de usuario:', error);
+            }
+        }
+    };
+
+    useEffect(() => {
+        fetchUserName();
+    }, []);
+
+
     const handlePassword = async () => {
         window.location.href = `/change-password`;
     };
@@ -40,16 +59,15 @@ export default function DashboardNavbar({ user }) {
                 <div className="relative pt-6 px-4 sm:px-6 lg:px-8">
                     <nav className="relative flex items-center justify-between sm:h-10 lg:justify-start" aria-label="Global">
                         <div className="flex items-center justify-start space-x-4 lg:flex-grow">
-                            <img className="h-8 w-auto" src="/images/logo-arrow.png" alt="Icono"/>
+                            <img className="h-8 w-auto" src="/images/logo-arrow.png" alt="Icono" />
                             <div className="hidden md:flex md:space-x-8">
                                 {navigation.map((item) => (
                                     <Link key={item.name} href={item.href}>
                                         <span className={`relative font-medium ${router.pathname.startsWith(item.href) ? 'text-white' : 'text-gray-300'} text-gray-300 hover:text-white underline-animation`}>
                                             {item.name}
                                             <span
-                                                className={`absolute -bottom-2.5 left-0 w-full h-0.5 bg-white transform scale-x-0 transition-transform duration-300 ease-out origin-left ${
-                                                    router.pathname.startsWith(item.href) ? 'scale-x-100' : 'hover:scale-x-100'
-                                                }`}
+                                                className={`absolute -bottom-2.5 left-0 w-full h-0.5 bg-white transform scale-x-0 transition-transform duration-300 ease-out origin-left ${router.pathname.startsWith(item.href) ? 'scale-x-100' : 'hover:scale-x-100'
+                                                    }`}
                                             ></span>
                                         </span>
                                     </Link>
@@ -63,7 +81,7 @@ export default function DashboardNavbar({ user }) {
                                 <div>
                                     <Menu.Button
                                         className="flex items-center text-white bg-gray-800 px-4 py-2 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
-                                        <span>{`${user.firstName} ${user.lastName}`}</span>
+                                        <span>{`${firstName} ${lastName}`}</span>
                                         <ChevronDownIcon className="ml-2 h-5 w-5" aria-hidden="true" />
                                     </Menu.Button>
                                 </div>

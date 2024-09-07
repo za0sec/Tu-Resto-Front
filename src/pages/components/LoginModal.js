@@ -6,10 +6,11 @@ import Cookies from 'js-cookie';
 import crypto from "crypto";
 import config from "@/pages/utils/config";
 import apiClient from "@/pages/utils/apiClient";
+import { jwtDecode } from 'jwt-decode';
 
 export default function LoginModal({ isOpen, closeModal }) {
     const router = useRouter();
-    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -19,8 +20,8 @@ export default function LoginModal({ isOpen, closeModal }) {
         setError('');
 
         try {
-            const response = await apiClient.post('/login', {
-                email,
+            const response = await apiClient.post('/auth/login', {
+                username,
                 password,
             });
 
@@ -31,10 +32,20 @@ export default function LoginModal({ isOpen, closeModal }) {
                 Cookies.set('accessToken', access, { secure: true, sameSite: 'Strict' });
                 Cookies.set('refreshToken', refresh, { secure: true, sameSite: 'Strict' });
 
+
+                const decoded = jwtDecode(access);
+                const userRole = decoded.role;
+
+                console.log(userRole);
+
+                Object.keys(decoded).forEach(key => {
+                    Cookies.set(`user_${key}`, decoded[key], { secure: true, sameSite: 'Strict' });
+                });
+
                 setSuccess('Inicio de sesión exitoso');
                 setTimeout(() => {
                     closeModal();
-                    router.push('/dashboard');
+                    router.push(`/${userRole.toLowerCase()}/dashboard`);
                 }, 2000);
             } else {
                 const errorData = response.data;
@@ -86,10 +97,10 @@ export default function LoginModal({ isOpen, closeModal }) {
                                 <form onSubmit={handleSubmit} className="mt-4">
                                     <div className="mb-4">
                                         <input
-                                            type="email"
-                                            placeholder="Correo Electrónico"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
+                                            type="text"
+                                            placeholder="Nombre de Usuario"
+                                            value={username}
+                                            onChange={(e) => setUsername(e.target.value)}
                                             className="w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:border-primary focus:ring-primary focus:ring-1"
                                             required
                                         />
