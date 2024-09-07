@@ -202,7 +202,7 @@ export default function SupervisorsPage() {
                         leaveFrom="opacity-100 scale-100"
                         leaveTo="opacity-0 scale-95"
                     >
-                    <div className="fixed inset-0 bg-black bg-opacity-50" />
+                        <div className="fixed inset-0 bg-black bg-opacity-50" />
                     </Transition.Child>
 
                     <div className="fixed inset-0 overflow-y-auto">

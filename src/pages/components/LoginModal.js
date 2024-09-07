@@ -25,12 +25,11 @@ export default function LoginModal({ isOpen, closeModal }) {
             });
 
             if (response.status === 200) {
-                const { accessToken, refreshToken } = response.data;
+                const { access, refresh } = response.data;
 
-                console.log("refresh obtenido del login: ", refreshToken);
 
-                Cookies.set('accessToken', accessToken, { secure: true, sameSite: 'Strict' });
-                Cookies.set('refreshToken', refreshToken, { secure: true, sameSite: 'Strict' });
+                Cookies.set('accessToken', access, { secure: true, sameSite: 'Strict' });
+                Cookies.set('refreshToken', refresh, { secure: true, sameSite: 'Strict' });
 
                 setSuccess('Inicio de sesión exitoso');
                 setTimeout(() => {
