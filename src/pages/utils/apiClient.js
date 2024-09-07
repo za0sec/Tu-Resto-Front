@@ -20,6 +20,8 @@ apiClient.interceptors.request.use(async (config) => {
         config.headers['Authorization'] = `Bearer ${accessToken}`;
     }
 
+    console.log("access token", accessToken);
+
     return config;
 }, (error) => {
     return Promise.reject(error);

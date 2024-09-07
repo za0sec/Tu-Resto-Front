@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import apiClient from "@/pages/utils/apiClient";
-import DashboardNavbar from '@/pages/components/DashboardNavbar';
+import AdminNavbar from '@/pages/components/AdminNavbar';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 export default function Assignation() {
@@ -174,7 +174,7 @@ export default function Assignation() {
 
     return (
         <div className="bg-gray-900 min-h-screen flex flex-col">
-            <DashboardNavbar user={user} />
+            <AdminNavbar user={user} />
             <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 mt-16">
                 <h1 className="text-4xl font-bold text-white mb-6">Asignación de Sucursales a Supervisores</h1>
                 <DragDropContext onDragEnd={onDragEnd}>

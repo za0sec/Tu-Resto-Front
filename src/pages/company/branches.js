@@ -2,7 +2,7 @@ import { useState, useEffect, Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { useRouter } from 'next/router';
 import apiClient from "@/pages/utils/apiClient";
-import DashboardNavbar from '@/pages/components/DashboardNavbar';
+import AdminNavbar from '@/pages/components/AdminNavbar';
 import Autocomplete from 'react-google-autocomplete';
 import config from "@/pages/utils/config";
 
@@ -149,7 +149,7 @@ export default function BranchesPage() {
 
     return (
         <div className="bg-gray-900 min-h-screen flex flex-col">
-            <DashboardNavbar user={user} />
+            <AdminNavbar user={user} />
             <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 mt-16">
                 <div className="bg-gray-800 p-6 rounded-lg shadow-lg mb-10">
                     <h1 className="text-4xl font-bold text-white mb-4">
@@ -188,7 +188,7 @@ export default function BranchesPage() {
                                         openDialog(branch);
                                     }}
                                     className="bg-blue-500 text-white py-1 px-3 rounded-md hover:bg-blue-600"
-                                    style={{pointerEvents: 'auto'}}
+                                    style={{ pointerEvents: 'auto' }}
                                 >
                                     Editar
                                 </button>
@@ -198,7 +198,7 @@ export default function BranchesPage() {
                                         confirmDelete(branch);
                                     }}
                                     className="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600"
-                                    style={{pointerEvents: 'auto'}}
+                                    style={{ pointerEvents: 'auto' }}
                                 >
                                     Eliminar
                                 </button>
@@ -264,11 +264,11 @@ export default function BranchesPage() {
                                                 apiKey={config.googleApiKey}
                                                 onPlaceSelected={(place) => {
                                                     const address = place.formatted_address;
-                                                    setCurrentBranch({...currentBranch, address});
+                                                    setCurrentBranch({ ...currentBranch, address });
                                                 }}
                                                 options={{
                                                     types: ['address'],
-                                                    componentRestrictions: {country: 'ar'}
+                                                    componentRestrictions: { country: 'ar' }
                                                 }}
                                                 className="w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary"
                                             />

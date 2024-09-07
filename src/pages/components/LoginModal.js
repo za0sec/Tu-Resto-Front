@@ -42,11 +42,11 @@ export default function LoginModal({ isOpen, closeModal }) {
                     Cookies.set(`user_${key}`, decoded[key], { secure: true, sameSite: 'Strict' });
                 });
 
-                setSuccess('Inicio de sesión exitoso');
+                setSuccess('Inicio de sesión exitoso, redirigiendo...');
                 setTimeout(() => {
                     closeModal();
                     router.push(`/${userRole.toLowerCase()}/dashboard`);
-                }, 2000);
+                }, 500);
             } else {
                 const errorData = response.data;
                 setError(errorData.message || 'Error al iniciar sesión');
@@ -72,7 +72,7 @@ export default function LoginModal({ isOpen, closeModal }) {
                     leaveFrom="opacity-100 scale-150"
                     leaveTo="opacity-0 scale-95"
                 >
-                    <div className="fixed inset-0 bg-black bg-opacity-75" />
+                    <div className="fixed inset-0 bg-black bg-opacity-70" />
                 </Transition.Child>
 
                 <div className="fixed inset-0 overflow-y-auto">
@@ -87,10 +87,10 @@ export default function LoginModal({ isOpen, closeModal }) {
                             leaveTo="opacity-0 scale-95"
                         >
                             <Dialog.Panel
-                                className="w-full max-w-md transform overflow-hidden rounded-lg bg-gray-800 p-6 text-left align-middle shadow-xl transition-all">
+                                className="w-full max-w-md transform overflow-hidden rounded-lg bg-white p-6 text-left align-middle shadow-xl transition-all">
                                 <Dialog.Title
                                     as="h3"
-                                    className="text-lg font-medium leading-6 text-primary"
+                                    className="text-lg font-medium leading-6 text-secondary"
                                 >
                                     Inicio de Sesión
                                 </Dialog.Title>
@@ -101,7 +101,7 @@ export default function LoginModal({ isOpen, closeModal }) {
                                             placeholder="Nombre de Usuario"
                                             value={username}
                                             onChange={(e) => setUsername(e.target.value)}
-                                            className="w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:border-primary focus:ring-primary focus:ring-1"
+                                            className="w-full px-4 py-2 rounded-md bg-gray-100 text-gray-800 border border-gray-300 focus:border-primary focus:ring-secondary focus:ring-1"
                                             required
                                         />
                                     </div>
@@ -111,7 +111,7 @@ export default function LoginModal({ isOpen, closeModal }) {
                                             placeholder="Contraseña"
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
-                                            className="w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:border-primary focus:ring-primary focus:ring-1"
+                                            className="w-full px-4 py-2 rounded-md bg-gray-100 text-gray-800 border border-gray-300 focus:border-primary focus:ring-primary focus:ring-1"
                                             required
                                         />
                                     </div>
@@ -119,7 +119,7 @@ export default function LoginModal({ isOpen, closeModal }) {
                                     {success && <p className="text-green-500 mb-4">{success}</p>}
                                     <button
                                         type="submit"
-                                        className="w-full bg-primary text-white font-medium px-4 py-2 rounded-md hover:bg-primary-dark"
+                                        className="w-full bg-secondary text-white font-medium px-4 py-2 rounded-md hover:bg-secondaryDark"
                                     >
                                         Iniciar Sesión
                                     </button>
@@ -127,7 +127,7 @@ export default function LoginModal({ isOpen, closeModal }) {
                                 <div className="mt-4 text-center">
                                     <button
                                         onClick={handleForgotPassword}
-                                        className="text-sm text-gray-300 hover:underline"
+                                        className="text-sm text-gray-600 hover:underline"
                                     >
                                         ¿Olvidaste tu contraseña?
                                     </button>

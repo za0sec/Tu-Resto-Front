@@ -1,8 +1,8 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Cookies from "js-cookie";
-import DashboardNavbar from "./components/DashboardNavbar";
-import {authenticate, fetchWithToken} from "./utils/auth";
+import AdminNavbar from "./components/AdminNavbar";
+import { authenticate, fetchWithToken } from "./utils/auth";
 import config from "@/pages/utils/config";
 import apiClient from "@/pages/utils/apiClient";
 
@@ -77,7 +77,7 @@ export default function ChangePassword() {
 
     return (
         <div className="bg-gray-900 min-h-screen flex flex-col">
-            <DashboardNavbar user={user}/>
+            <AdminNavbar user={user} />
             <div className="min-h-screen flex items-center justify-center bg-gray-900">
                 <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
                     <h1 className="text-3xl font-bold mb-6 text-center text-primary">Cambiar Contraseña</h1>

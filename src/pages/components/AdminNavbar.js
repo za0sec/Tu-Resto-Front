@@ -7,13 +7,13 @@ import { useRouter } from 'next/router';
 
 
 const navigation = [
-    { name: 'Dashboard', href: '/dashboard' },
-    { name: 'Supervisores', href: '/supervisors' },
-    { name: 'Empresas', href: '/company' },
+    { name: 'Dashboard', href: '/admin/dashboard' },
+    { name: 'Restaurantes', href: '/admin/restaurants' },
+    { name: 'Empresas', href: '/admin/company' },
     { name: 'Help', href: '/help' },
 ];
 
-export default function DashboardNavbar() {
+export default function AdminNavbar() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const router = useRouter();
     const [firstName, setFirstName] = useState(null);
@@ -56,14 +56,17 @@ export default function DashboardNavbar() {
     return (
         <>
             <Popover>
-                <div className="relative pt-6 px-4 sm:px-6 lg:px-8">
-                    <nav className="relative flex items-center justify-between sm:h-10 lg:justify-start" aria-label="Global">
+
+                <div className="relative pt-6 px-4 sm:px-6 lg:px-8 shadow-lg py-4">
+                    <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between sm:h-10 lg:justify-start bg-white shadow-md px-10 py-10" aria-label="Global">
                         <div className="flex items-center justify-start space-x-4 lg:flex-grow">
-                            <img className="h-8 w-auto" src="/images/logo-arrow.png" alt="Icono" />
+                            <div className="bg-blue-500 p-2 rounded-full mr-10">
+                                <img className="h-8 w-8" src="/svg/fork.svg" alt="Icono" />
+                            </div>
                             <div className="hidden md:flex md:space-x-8">
                                 {navigation.map((item) => (
                                     <Link key={item.name} href={item.href}>
-                                        <span className={`relative font-medium ${router.pathname.startsWith(item.href) ? 'text-white' : 'text-gray-300'} text-gray-300 hover:text-white underline-animation`}>
+                                        <span className={`relative font-medium ${router.pathname.startsWith(item.href) ? 'text-secondary' : 'text-gray-700'} hover:text-secondary`}>
                                             {item.name}
                                             <span
                                                 className={`absolute -bottom-2.5 left-0 w-full h-0.5 bg-white transform scale-x-0 transition-transform duration-300 ease-out origin-left ${router.pathname.startsWith(item.href) ? 'scale-x-100' : 'hover:scale-x-100'
@@ -80,7 +83,7 @@ export default function DashboardNavbar() {
                             <Menu as="div" className="relative">
                                 <div>
                                     <Menu.Button
-                                        className="flex items-center text-white bg-gray-800 px-4 py-2 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                                        className="flex items-center text-gray-800 bg-white px-4 py-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-300">
                                         <span>{`${firstName} ${lastName}`}</span>
                                         <ChevronDownIcon className="ml-2 h-5 w-5" aria-hidden="true" />
                                     </Menu.Button>
@@ -94,12 +97,12 @@ export default function DashboardNavbar() {
                                     leaveFrom="transform opacity-100 scale-100"
                                     leaveTo="transform opacity-0 scale-95"
                                 >
-                                    <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right bg-gray-800 divide-y divide-gray-700 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                    <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right bg-white divide-y divide-gray-200 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                                         <div className="py-1">
                                             <Menu.Item>
                                                 {({ active }) => (
                                                     <Link href="/profile">
-                                                        <span className={`block px-4 py-2 text-sm ${active ? 'bg-gray-700 text-white' : 'text-gray-300'}`}>
+                                                        <span className={`block px-4 py-2 text-sm ${active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'}`}>
                                                             Mi Perfil
                                                         </span>
                                                     </Link>
@@ -108,7 +111,7 @@ export default function DashboardNavbar() {
                                             <Menu.Item>
                                                 {({ active }) => (
                                                     <Button onClick={handlePassword}>
-                                                        <span className={`block px-4 py-2 text-sm ${active ? 'bg-gray-700 text-white' : 'text-gray-300'}`}>
+                                                        <span className={`block px-4 py-2 text-sm ${active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'}`}>
                                                             Cambiar Contraseña
                                                         </span>
                                                     </Button>
@@ -117,7 +120,7 @@ export default function DashboardNavbar() {
                                             <Menu.Item>
                                                 {({ active }) => (
                                                     <button
-                                                        className={`block w-full text-left px-4 py-2 text-sm ${active ? 'bg-gray-700 text-white' : 'text-gray-300'}`}
+                                                        className={`block w-full text-left px-4 py-2 text-sm ${active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'}`}
                                                         onClick={openModal}
                                                     >
                                                         Cerrar Sesión
@@ -131,7 +134,7 @@ export default function DashboardNavbar() {
                         </div>
 
                         <div className="-mr-2 flex items-center md:hidden">
-                            <Popover.Button className="bg-gray-900 rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                            <Popover.Button className="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-300">
                                 <span className="sr-only">Open main menu</span>
                                 <Bars3Icon className="h-6 w-6" aria-hidden="true" />
                             </Popover.Button>
@@ -149,13 +152,13 @@ export default function DashboardNavbar() {
                     leaveTo="opacity-0 scale-95"
                 >
                     <Popover.Panel focus className="fixed inset-0 z-50 p-2 transition transform origin-top-right md:hidden">
-                        <div className="rounded-lg shadow-md bg-gray-800 ring-1 ring-black ring-opacity-5 overflow-hidden">
+                        <div className="rounded-lg shadow-md bg-white ring-1 ring-black ring-opacity-5 overflow-hidden">
                             <div className="px-5 pt-4 flex items-center justify-between">
                                 <div>
                                     <img className="h-8 w-auto" src="/images/logo-arrow.png" alt="" />
                                 </div>
                                 <div className="-mr-2">
-                                    <Popover.Button className="bg-gray-900 rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                                    <Popover.Button className="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-300">
                                         <span className="sr-only">Close main menu</span>
                                         <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                                     </Popover.Button>
@@ -164,7 +167,7 @@ export default function DashboardNavbar() {
                             <div className="mt-3 px-2 space-y-1">
                                 {navigation.map((item) => (
                                     <Link key={item.name} href={item.href}>
-                                        <span className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">
+                                        <span className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100">
                                             {item.name}
                                         </span>
                                     </Link>
@@ -186,7 +189,7 @@ export default function DashboardNavbar() {
                         leaveFrom="opacity-100 scale-100"
                         leaveTo="opacity-0 scale-95"
                     >
-                        <div className="fixed inset-0 bg-black bg-opacity-50" />
+                        <div className="fixed inset-0 bg-black bg-opacity-25" />
                     </Transition.Child>
 
                     <div className="fixed inset-0 overflow-y-auto">
@@ -200,22 +203,22 @@ export default function DashboardNavbar() {
                                 leaveFrom="opacity-100 scale-100"
                                 leaveTo="opacity-0 scale-95"
                             >
-                                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-lg bg-gray-800 p-6 text-left align-middle shadow-xl transition-all">
-                                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-white">
+                                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-lg bg-white p-6 text-left align-middle shadow-xl transition-all">
+                                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
                                         Confirmación de Cierre de Sesión
                                     </Dialog.Title>
                                     <div className="mt-4">
-                                        <p className="text-gray-300">¿Estás seguro de que deseas cerrar sesión?</p>
+                                        <p className="text-gray-600">¿Estás seguro de que deseas cerrar sesión?</p>
                                     </div>
                                     <div className="mt-6 flex justify-end space-x-4">
                                         <button
-                                            className="bg-gray-600 text-white font-medium px-4 py-2 rounded-md hover:bg-gray-500"
+                                            className="bg-gray-200 text-gray-800 font-medium px-4 py-2 rounded-md hover:bg-gray-300"
                                             onClick={closeModal}
                                         >
                                             Cancelar
                                         </button>
                                         <button
-                                            className="bg-red-600 text-white font-medium px-4 py-2 rounded-md hover:bg-red-700"
+                                            className="bg-red-500 text-white font-medium px-4 py-2 rounded-md hover:bg-red-600"
                                             onClick={handleLogout}
                                         >
                                             Cerrar Sesión

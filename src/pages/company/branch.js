@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import apiClient from "@/pages/utils/apiClient";
-import DashboardNavbar from '@/pages/components/DashboardNavbar';
+import AdminNavbar from '@/pages/components/AdminNavbar';
 import GoogleMapReact from 'google-map-react';
 import config from "@/pages/utils/config";
 import { Calendar, momentLocalizer } from 'react-big-calendar';
@@ -115,7 +115,7 @@ export default function BranchDetails() {
 
     return (
         <div className="bg-gray-900 min-h-screen flex flex-col">
-            <DashboardNavbar user={user} />
+            <AdminNavbar user={user} />
             <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 mt-16">
                 <div className="bg-gray-800 p-6 rounded-lg shadow-lg mb-10">
                     <h1 className="text-4xl font-bold text-white mb-4">{branchDetails?.name}</h1>

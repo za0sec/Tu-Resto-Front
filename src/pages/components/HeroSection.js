@@ -1,37 +1,31 @@
-
 export default function HeroSection({ openModal }) {
     return (
         <main
             className="mt-10 mx-10 sm:mt-12 md:mt-16 lg:mt-20 xl:mt-28 lg:flex lg:items-center lg:justify-between">
             <div className="lg:w-1/2 text-left">
-                <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+                <h1 className="text-3xl tracking-tight font-extrabold text-gray-600 sm:text-5xl md:text-6xl leading-relaxed tracking-wide">
                     <span className="block xl:inline">Impulsa la Gestión de tu Restaurante con<br /></span>{' '}
-                    <span className="block text-primary xl:inline">Tu Resto</span>
+                    <span className="block text-primary xl:inline mt-2">Tu Resto</span>
                 </h1>
-                <br />
-                <p className="mt-3 text-base text-gray-400 sm:mt-5 sm:text-lg md:mt-5 md:text-xl lg:max-w-full lg:mx-0">
-                Con TuResto, controla tus pedidos, mesas y reservas de forma eficiente, brindando una experiencia inigualable a tus clientes.
+
+                {/* Línea decorativa debajo del título */}
+                <div className="mt-2 w-20 h-1 bg-gray-900"></div>
+
+                <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg md:mt-5 md:text-xl lg:max-w-full lg:mx-0">
+                    Con TuResto, vas a poder centralizar la gestión de tus pedidos, mesas y reservas de forma eficiente, brindando una experiencia inigualable a tus clientes.
                 </p>
-                <br /><br />
-                <div className="mt-5 sm:mt-8 flex justify-start space-x-4">
+
+                <div className="mt-8 sm:mt-10">
                     <button
                         onClick={openModal}
-                        className="bg-primary text-white font-medium px-6 py-2 rounded-md hover:bg-primaryDark"
+                        className="bg-primary text-white text-lg px-8 py-3 rounded-full shadow-lg hover:bg-primaryDark transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
                     >
-                        Ingresar
+                        Ingresar Ahora
                     </button>
-                    <div className="rounded-md shadow">
-                        <a
-                            href="#"
-                            className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-primary bg-gray-800 hover:bg-gray-700 md:py-4 md:text-lg md:px-10"
-                        >
-                            Registrarse
-                        </a>
-                    </div>
                 </div>
             </div>
             <div className="mt-10 lg:mt-0 lg:w-1/2 flex justify-center lg:justify-end">
-                <img src="/jpg/turesto.jpeg" alt="Imagen moderna"
+                <img src="/jpg/turesto.png" alt="Imagen moderna"
                     className="w-full h-auto max-w-lg sm:max-w-xl md:max-w-2xl lg:max-w-3xl" />
             </div>
         </main>
