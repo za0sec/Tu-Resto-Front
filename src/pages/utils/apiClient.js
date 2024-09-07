@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 import config from "@/pages/utils/config";
 
 const apiClient = axios.create({
-    baseURL: `${config.apiUrl}  `,
+    baseURL: `${config.apiUrl}`,
     headers: {
         'Content-Type': 'application/json',
     },
@@ -19,6 +19,8 @@ apiClient.interceptors.request.use(async (config) => {
     if (accessToken) {
         config.headers['Authorization'] = `Bearer ${accessToken}`;
     }
+
+    console.log("access token", accessToken);
 
     return config;
 }, (error) => {

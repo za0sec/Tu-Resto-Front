@@ -1,12 +1,12 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import cookie from 'cookie';
 import Cookies from "js-cookie";
-import DashboardNavbar from "./components/DashboardNavbar";
+import AdminNavbar from "./components/AdminNavbar";
 import config from "@/pages/utils/config";
-import {authenticate, checkToken, fetchWithToken} from "@/pages/utils/auth";
+import { authenticate, checkToken, fetchWithToken } from "@/pages/utils/auth";
 import apiClient from "@/pages/utils/apiClient";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 
 export default function Profile() {
 
@@ -79,9 +79,9 @@ export default function Profile() {
 
     return (
         <div className="bg-gray-900 min-h-screen flex flex-col">
-            <DashboardNavbar user={user}/>
-            <br/>
-            <br/>
+            <AdminNavbar user={user} />
+            <br />
+            <br />
             <div className="min-h-screen bg-gray-900 text-white p-6 flex flex-col items-center">
                 <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-3xl">
                     <h1 className="text-3xl font-bold mb-6 text-center text-primary">Mi Perfil</h1>

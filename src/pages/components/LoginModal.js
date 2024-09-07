@@ -6,10 +6,11 @@ import Cookies from 'js-cookie';
 import crypto from "crypto";
 import config from "@/pages/utils/config";
 import apiClient from "@/pages/utils/apiClient";
+import { jwtDecode } from 'jwt-decode';
 
 export default function LoginModal({ isOpen, closeModal }) {
     const router = useRouter();
-    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -19,8 +20,8 @@ export default function LoginModal({ isOpen, closeModal }) {
         setError('');
 
         try {
-            const response = await apiClient.post('/login', {
-                email,
+            const response = await apiClient.post('/auth/login', {
+                username,
                 password,
             });
 
@@ -31,11 +32,21 @@ export default function LoginModal({ isOpen, closeModal }) {
                 Cookies.set('accessToken', access, { secure: true, sameSite: 'Strict' });
                 Cookies.set('refreshToken', refresh, { secure: true, sameSite: 'Strict' });
 
-                setSuccess('Inicio de sesión exitoso');
+
+                const decoded = jwtDecode(access);
+                const userRole = decoded.role;
+
+                console.log(userRole);
+
+                Object.keys(decoded).forEach(key => {
+                    Cookies.set(`user_${key}`, decoded[key], { secure: true, sameSite: 'Strict' });
+                });
+
+                setSuccess('Inicio de sesión exitoso, redirigiendo...');
                 setTimeout(() => {
                     closeModal();
-                    router.push('/dashboard');
-                }, 2000);
+                    router.push(`/${userRole.toLowerCase()}/dashboard`);
+                }, 500);
             } else {
                 const errorData = response.data;
                 setError(errorData.message || 'Error al iniciar sesión');
@@ -61,7 +72,7 @@ export default function LoginModal({ isOpen, closeModal }) {
                     leaveFrom="opacity-100 scale-150"
                     leaveTo="opacity-0 scale-95"
                 >
-                    <div className="fixed inset-0 bg-black bg-opacity-75" />
+                    <div className="fixed inset-0 bg-black bg-opacity-70" />
                 </Transition.Child>
 
                 <div className="fixed inset-0 overflow-y-auto">
@@ -76,21 +87,21 @@ export default function LoginModal({ isOpen, closeModal }) {
                             leaveTo="opacity-0 scale-95"
                         >
                             <Dialog.Panel
-                                className="w-full max-w-md transform overflow-hidden rounded-lg bg-gray-800 p-6 text-left align-middle shadow-xl transition-all">
+                                className="w-full max-w-md transform overflow-hidden rounded-lg bg-white p-6 text-left align-middle shadow-xl transition-all">
                                 <Dialog.Title
                                     as="h3"
-                                    className="text-lg font-medium leading-6 text-primary"
+                                    className="text-lg font-medium leading-6 text-secondary"
                                 >
                                     Inicio de Sesión
                                 </Dialog.Title>
                                 <form onSubmit={handleSubmit} className="mt-4">
                                     <div className="mb-4">
                                         <input
-                                            type="email"
-                                            placeholder="Correo Electrónico"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            className="w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:border-primary focus:ring-primary focus:ring-1"
+                                            type="text"
+                                            placeholder="Nombre de Usuario"
+                                            value={username}
+                                            onChange={(e) => setUsername(e.target.value)}
+                                            className="w-full px-4 py-2 rounded-md bg-gray-100 text-gray-800 border border-gray-300 focus:border-primary focus:ring-secondary focus:ring-1"
                                             required
                                         />
                                     </div>
@@ -100,7 +111,7 @@ export default function LoginModal({ isOpen, closeModal }) {
                                             placeholder="Contraseña"
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
-                                            className="w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:border-primary focus:ring-primary focus:ring-1"
+                                            className="w-full px-4 py-2 rounded-md bg-gray-100 text-gray-800 border border-gray-300 focus:border-primary focus:ring-primary focus:ring-1"
                                             required
                                         />
                                     </div>
@@ -108,7 +119,7 @@ export default function LoginModal({ isOpen, closeModal }) {
                                     {success && <p className="text-green-500 mb-4">{success}</p>}
                                     <button
                                         type="submit"
-                                        className="w-full bg-primary text-white font-medium px-4 py-2 rounded-md hover:bg-primary-dark"
+                                        className="w-full bg-secondary text-white font-medium px-4 py-2 rounded-md hover:bg-secondaryDark"
                                     >
                                         Iniciar Sesión
                                     </button>
@@ -116,7 +127,7 @@ export default function LoginModal({ isOpen, closeModal }) {
                                 <div className="mt-4 text-center">
                                     <button
                                         onClick={handleForgotPassword}
-                                        className="text-sm text-gray-300 hover:underline"
+                                        className="text-sm text-gray-600 hover:underline"
                                     >
                                         ¿Olvidaste tu contraseña?
                                     </button>
