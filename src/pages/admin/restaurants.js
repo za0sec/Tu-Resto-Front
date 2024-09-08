@@ -29,6 +29,53 @@ export default function Restaurants() {
             setLoading(false);
         }
     };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const formData = new FormData();
+            formData.append('name', newRestaurant.name);
+            formData.append('website', newRestaurant.website);
+
+            if (newRestaurant.banner) {
+                // Convertir la imagen base64 a un archivo
+                const byteString = atob(newRestaurant.banner.split(',')[1]);
+                const mimeString = newRestaurant.banner.split(',')[0].split(':')[1].split(';')[0];
+                const ab = new ArrayBuffer(byteString.length);
+                const ia = new Uint8Array(ab);
+                for (let i = 0; i < byteString.length; i++) {
+                    ia[i] = byteString.charCodeAt(i);
+                }
+                const blob = new Blob([ab], { type: mimeString });
+                const file = new File([blob], "banner.jpg", { type: mimeString });
+
+                formData.append('banner', file);
+            }
+
+            const response = await apiClient.post('/restaurant/create', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+
+            if (response.status === 201) {
+                closeModal();
+                fetchRestaurants();
+            }
+        } catch (error) {
+            console.error('Error al crear el restaurante:', error);
+        }
+    };
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setNewRestaurant({ ...newRestaurant, banner: reader.result });
+            };
+            reader.readAsDataURL(file);
+        }
+    };
 
     const openModal = () => {
         setIsModalOpen(true);
@@ -42,19 +89,6 @@ export default function Restaurants() {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setNewRestaurant({ ...newRestaurant, [name]: value });
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await apiClient.post('/restaurant/create', newRestaurant);
-            if (response.status === 201) {
-                closeModal();
-                fetchRestaurants();
-            }
-        } catch (error) {
-            console.error('Error al crear el restaurante:', error);
-        }
     };
 
     if (loading) {
@@ -82,13 +116,13 @@ export default function Restaurants() {
             <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 mt-16">
                 <div className="flex justify-between items-center mb-8">
                     <h1 className="text-3xl font-bold text-gray-800">Nuestros Restaurantes</h1>
-                    <button onClick={openModal} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                    <button onClick={openModal} className="bg-primary hover:bg-primaryDark text-white font-bold py-2 px-4 rounded">
                         Agregar Restaurante
                     </button>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {restaurants.map((restaurant) => (
-                        <a href={`/admin/restaurants/${restaurant.id}`} key={restaurant.id} className="block">
+                        <a href={`/admin/restaurants/restaurant?id=${restaurant.id}`} key={restaurant.id} className="block">
                             <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 cursor-pointer">
                                 <img
                                     src={restaurant.banner || "https://via.placeholder.com/400x200"}
@@ -96,19 +130,21 @@ export default function Restaurants() {
                                     className="w-full h-48 object-cover"
                                 />
                                 <div className="p-6">
-                                    <h2 className="text-2xl font-bold text-gray-800 mb-2">{restaurant.name}</h2>
+                                    <h2 className="text-2xl font-bold text-primary mb-2">{restaurant.name}</h2>
                                     <p className="text-gray-600 mb-4">{restaurant.description}</p>
-                                    <div className="flex items-center text-gray-500 mb-2">
-                                        <FaMapMarkerAlt className="mr-2" />
-                                        <span>{restaurant.location}</span>
-                                    </div>
-                                    <div className="flex items-center text-gray-500 mb-2">
-                                        <FaUsers className="mr-2" />
-                                        <span>{restaurant.employees.length} empleados</span>
-                                    </div>
-                                    <div className="flex items-center text-gray-500">
-                                        <FaUtensils className="mr-2" />
-                                        <span>{restaurant.cuisine}</span>
+                                    <div className="flex flex-wrap gap-2 mt-4">
+                                        <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm flex items-center">
+                                            <FaMapMarkerAlt className="mr-2" />
+                                            {restaurant.location}
+                                        </span>
+                                        <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm flex items-center">
+                                            <FaUsers className="mr-2" />
+                                            {restaurant?.employees?.length} empleados
+                                        </span>
+                                        <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm flex items-center">
+                                            <FaUtensils className="mr-2" />
+                                            {restaurant.cuisine}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -151,6 +187,17 @@ export default function Restaurants() {
                                     onChange={handleInputChange}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
                                     required
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-2">Imagen del Restaurante</label>
+                                <input
+                                    type="file"
+                                    id="image"
+                                    name="image"
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
                                 />
                             </div>
                             <div className="mt-6">

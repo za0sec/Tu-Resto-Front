@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import Navbar from './components/Navbar';
 import HeroSection from './components/HeroSection';
-import CountersSection from './components/CountersSection';
 import LoginModal from "./components/LoginModal";
 import { useRouter } from "next/router";
 import Subscription from './components/Subscription';

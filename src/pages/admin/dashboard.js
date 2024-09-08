@@ -282,7 +282,7 @@ export default function Dashboard() {
                                             <td className="px-6 py-4 whitespace-nowrap">{restaurant.name}</td>
                                             <td className="px-6 py-4 whitespace-nowrap">{restaurant.location}</td>
                                             <td className="px-6 py-4 whitespace-nowrap">{restaurant.plan}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap">{restaurant.employees.length}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{restaurant?.employees?.length}</td>
                                         </tr>
                                     ))}
                                 </tbody>
