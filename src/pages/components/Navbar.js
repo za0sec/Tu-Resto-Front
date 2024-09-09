@@ -4,9 +4,9 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
 const navigation = [
-    { name: 'Funcionalidades', href: '#' },
+    { name: 'Funcionalidades', href: '/branchemployee/dashboard' },
     { name: 'Dispositivos', href: '#' },
-    { name: 'Suscripciones', href: '#' },
+    { name: 'Suscripciones', href: '/Subscription' },
     { name: 'Contacto', href: '#' },
 ];
 

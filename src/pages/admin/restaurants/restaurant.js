@@ -8,6 +8,7 @@ export default function Restaurant() {
     const [restaurant, setRestaurant] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const { id } = router.query;
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,12 +20,16 @@ export default function Restaurant() {
             email: ''
         },
         phone: '',
-        restaurant: id
+        restaurant: null
     });
 
     useEffect(() => {
         if (id) {
             fetchRestaurant();
+            setNewManager(prevState => ({
+                ...prevState,
+                restaurant: id
+            }));
         }
     }, [id]);
 
@@ -68,6 +73,7 @@ export default function Restaurant() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
         try {
             const response = await apiClient.post('/users/manager/create', newManager);
             if (response.status === 201) {
@@ -76,6 +82,8 @@ export default function Restaurant() {
             }
         } catch (error) {
             console.error('Error al crear el manager:', error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -186,9 +194,16 @@ export default function Restaurant() {
                                 <div className="mt-6">
                                     <button
                                         type="submit"
+                                        disabled={isLoading}
                                         className="w-full bg-primary text-white px-4 py-2 rounded-md hover:bg-primaryDark transition duration-300 ease-in-out"
                                     >
-                                        Crear Manager
+                                        {isLoading ? (
+                                            <div className="flex justify-center items-center">
+                                                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                                            </div>
+                                        ) : (
+                                            'Crear Manager'
+                                        )}
                                     </button>
                                 </div>
                             </form>
