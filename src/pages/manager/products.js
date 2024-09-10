@@ -1,17 +1,20 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import ManagerNavbar from '../components/ManagerNavbar';
 import apiClient from "../utils/apiClient";
 import { FaTag, FaInfo, FaImage } from 'react-icons/fa';
+import * as FaIcons from 'react-icons/fa';
 
 export default function Categories() {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [newCategory, setNewCategory] = useState({ name: '', description: '' });
+    const [newCategory, setNewCategory] = useState({ name: '', description: '', icon: '' });
+    const [icons, setIcons] = useState([]);
 
     useEffect(() => {
         fetchCategories();
+        setIcons(Object.keys(FaIcons));
     }, []);
 
     const fetchCategories = async () => {
@@ -36,6 +39,7 @@ export default function Categories() {
             const formData = new FormData();
             formData.append('name', newCategory.name);
             formData.append('description', newCategory.description);
+            formData.append('icon', newCategory.icon);
 
             if (newCategory.photo) {
                 const byteString = atob(newCategory.photo.split(',')[1]);
@@ -83,7 +87,7 @@ export default function Categories() {
 
     const closeModal = () => {
         setIsModalOpen(false);
-        setNewCategory({ name: '', description: '' });
+        setNewCategory({ name: '', description: '', icon: '' });
     };
 
     const handleInputChange = (e) => {
@@ -113,6 +117,7 @@ export default function Categories() {
     return (
         <div className="bg-gray-100 min-h-screen flex flex-col">
             <ManagerNavbar />
+
             <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 mt-16">
                 <div className="flex justify-between items-center mb-8">
                     <h1 className="text-3xl font-bold text-gray-800">Categorías de Productos</h1>
@@ -122,7 +127,7 @@ export default function Categories() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {categories.map((category) => (
-                        <a href={`/admin/categories/category?id=${category.id}`} key={category.id} className="block">
+                        <a href={`/manager/products/category?id=${category.id}`} key={category.id} className="block">
                             <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 cursor-pointer">
                                 <img
                                     src={category.photo || "https://via.placeholder.com/400x200"}
@@ -136,14 +141,6 @@ export default function Categories() {
                                         <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm flex items-center">
                                             <FaTag className="mr-2" />
                                             {category.name}
-                                        </span>
-                                        <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm flex items-center">
-                                            <FaInfo className="mr-2" />
-                                            Detalles
-                                        </span>
-                                        <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm flex items-center">
-                                            <FaImage className="mr-2" />
-                                            Imagen
                                         </span>
                                     </div>
                                 </div>
@@ -187,6 +184,24 @@ export default function Categories() {
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
                                     required
                                 />
+                            </div>
+                            <div className="mb-4">
+                                <label htmlFor="icon" className="block text-sm font-medium text-gray-700 mb-2">Icono</label>
+                                <select
+                                    id="icon"
+                                    name="icon"
+                                    value={newCategory.icon}
+                                    onChange={handleInputChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+                                    required
+                                >
+                                    <option value="">Seleccione un icono</option>
+                                    {icons.map((iconName, index) => (
+                                        <option key={index} value={iconName}>
+                                            {FaIcons[iconName] ? FaIcons[iconName].name : iconName}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                             <div className="mb-4">
                                 <label htmlFor="photo" className="block text-sm font-medium text-gray-700 mb-2">Foto de la Categoría</label>

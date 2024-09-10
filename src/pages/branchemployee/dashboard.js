@@ -1,169 +1,217 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import EmployeeNavbar from '../components/EmployeeNavbar';
-import DatePicker from "react-datepicker";
-import 'react-datepicker/dist/react-datepicker.css';
-import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
+import apiClient from "@/pages/utils/apiClient";
+import OrderModal from '../components/createOrderDialog';
+import { useRouter } from 'next/router';
+import { FaTrash, FaEdit, FaPlus, FaTimes } from 'react-icons/fa';
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 
 export default function BranchDashboard() {
-    const [tables, setTables] = useState([
-        { id: 1, number: 1, capacity: 4, reservable: true, inCharge: 'Juan' },
-        { id: 2, number: 2, capacity: 2, reservable: false, inCharge: 'María' },
-        { id: 3, number: 3, capacity: 6, reservable: true, inCharge: 'Pedro' }
-    ]);
-    const [orders, setOrders] = useState([
-        { id: 1, status: 'Pendiente' },
-        { id: 2, status: 'En proceso' },
-        { id: 3, status: 'Completada' }
-    ]);
-    const [date, setDate] = useState(new Date());
-    const [isOpen, setIsOpen] = useState(false);
-    const [editingTable, setEditingTable] = useState(null);
-    const [newTable, setNewTable] = useState({
-        number: tables.length + 1,
-        capacity: '',
-        reservable: false,
-        inCharge: ''
-    });
+    const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [formData, setFormData] = useState({ orderType: '', responsible: '', consumer: '' });
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [orderToDelete, setOrderToDelete] = useState(null);
+    const router = useRouter();
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
 
-    const handleDateChange = (selectedDate) => {
-        setDate(selectedDate);
-    };
+    useEffect(() => {
+        const fetchOrders = async () => {
+            try {
+                const ordersData = await apiClient.get(`/orders`);
+                setOrders(ordersData.data);
+            } catch (error) {
+                console.error('Error al obtener órdenes:', error);
+                setError('Error al cargar las órdenes');
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    const openDialog = (table = null) => {
-        if (table) {
-            setEditingTable(table);
-            setNewTable({ ...table });
-        } else {
-            setEditingTable(null);
-            setNewTable({
-                number: tables.length + 1,
-                capacity: '',
-                reservable: false,
-                inCharge: ''
-            });
+        fetchOrders();
+    }, []);
+
+    const selectOrder = async (orderId) => {
+        try {
+            const orderDetails = await apiClient.get(`/order/${orderId}`);
+            setSelectedOrder(orderDetails.data);
+        } catch (error) {
+            console.error('Error al obtener detalles del pedido:', error);
+            setError('Error al cargar los detalles del pedido');
         }
-        setIsOpen(true);
-    };
-
-    const closeDialog = () => {
-        setIsOpen(false);
-        setEditingTable(null);
     };
 
     const handleInputChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setNewTable(prev => ({
-            ...prev,
-            [name]: type === 'checkbox' ? checked : value
-        }));
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
     };
 
-    const addOrUpdateTable = () => {
-        if (newTable.capacity && newTable.inCharge) {
-            if (editingTable) {
-                setTables(prev => prev.map(table =>
-                    table.id === editingTable.id ? { ...newTable, id: table.id } : table
-                ));
-            } else {
-                setTables(prev => [...prev, { ...newTable, id: prev.length + 1 }]);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await apiClient.post(`/order/${formData.orderType}/create`, { order_items: [] });
+            setFormData({ orderType: '', responsible: '', consumer: '' });
+            closeModal();
+            if (response.status === 201 && response.data.id) {
+                console.log('Orden creada exitosamente:', response.data);
+                router.push(`/branchemployee/editorder?id=${response.data.id}`);
             }
-            closeDialog();
+        } catch (error) {
+            console.error('Error al crear la orden:', error);
+            setError('Error al crear la orden');
         }
     };
 
-    const editTable = (tableId) => {
-        const table = tables.find(t => t.id === tableId);
-        openDialog(table);
-    };
-
-    const deleteTable = (tableId) => {
-        if (confirm("¿Está seguro de que desea eliminar esta mesa?")) {
-            setTables(tables.filter(table => table.id !== tableId));
+    const handleUpdateOrder = async (orderId) => {
+        try {
+            if (!selectedOrder) {
+                console.error('No hay orden seleccionada para actualizar');
+                return;
+            }
+            router.push(`/branchemployee/editorder?id=${orderId}`);
+        } catch (error) {
+            console.error('Error al actualizar la orden:', error.response?.data || error.message);
         }
     };
 
-    const addOrder = () => {
-        const newOrder = { id: orders.length + 1, status: 'Pendiente' };
-        setOrders([...orders, newOrder]);
+    const openDeleteDialog = (orderId) => {
+        setOrderToDelete(orderId);
+        setIsDeleteDialogOpen(true);
     };
 
-    const editOrder = (orderId) => {
-        const newStatus = prompt("Ingrese el nuevo estado de la orden:");
-        if (newStatus) {
-            setOrders(orders.map(order =>
-                order.id === orderId ? { ...order, status: newStatus } : order
-            ));
+    const closeDeleteDialog = () => {
+        setIsDeleteDialogOpen(false);
+        setOrderToDelete(null);
+    };
+
+    const handleDelete = async () => {
+        try {
+            const response = await apiClient.delete(`/order/takeaway/${orderToDelete}`);
+            if (response.status === 200 || response.status === 204) {
+                console.log('Orden eliminada exitosamente');
+                setOrders(orders.filter(order => order.id !== orderToDelete));
+                setSelectedOrder(null);
+                closeDeleteDialog();
+            }
+        } catch (error) {
+            console.error('Error al eliminar la orden:', error.response?.data || error.message);
+            setError('Error al eliminar la orden');
         }
     };
 
-    const deleteOrder = (orderId) => {
-        if (confirm("¿Está seguro de que desea eliminar esta orden?")) {
-            setOrders(orders.filter(order => order.id !== orderId));
-        }
-    };
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-gray-100 flex justify-center items-center">
+                <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="min-h-screen bg-gray-100 flex justify-center items-center">
+                <div className="bg-white p-6 rounded-lg shadow-lg">
+                    <h2 className="text-2xl font-bold text-red-600 mb-4">Error</h2>
+                    <p>{error}</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gray-100">
             <EmployeeNavbar />
             <div className="container mx-auto px-4 py-8">
-                <h1 className="text-3xl font-bold mb-6">Dashboard de Sucursal</h1>
-
-                <div className="mb-6">
-                    <h2 className="text-2xl font-bold mb-4">Mesas</h2>
-                    <button onClick={() => openDialog()} className="bg-blue-500 text-white p-2 rounded mb-4">
-                        <FaPlus className="inline mr-2" /> Agregar Mesa
+                <div className="flex justify-between items-center mb-8 py-8">
+                    <h1 className="text-4xl font-bold text-gray-800">Órdenes</h1>
+                    <button
+                        onClick={openModal}
+                        className="bg-primary text-white px-6 py-3 rounded-full hover:bg-primaryDark transition duration-300 flex items-center"
+                    >
+                        <FaPlus className="mr-2" /> Crear Orden
                     </button>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {tables.map(table => (
-                            <div key={table.id} className="bg-white p-4 rounded shadow">
-                                <h3 className="text-xl font-bold mb-2">Mesa {table.number}</h3>
-                                <p>Capacidad: {table.capacity}</p>
-                                <p>Reservable: {table.reservable ? 'Sí' : 'No'}</p>
-                                <p>A cargo: {table.inCharge}</p>
-                                <button onClick={() => editTable(table.id)} className="bg-yellow-500 text-white p-2 rounded mr-2 mt-2">
-                                    <FaEdit className="inline mr-2" /> Editar
-                                </button>
-                                <button onClick={() => deleteTable(table.id)} className="bg-red-500 text-white p-2 rounded mt-2">
-                                    <FaTrash className="inline mr-2" /> Eliminar
-                                </button>
-                            </div>
-                        ))}
-                    </div>
                 </div>
-
-                <div className="mb-6">
-                    <h2 className="text-2xl font-bold mb-4">Órdenes</h2>
-                    <div className="flex items-center mb-4">
-                        <DatePicker
-                            selected={date}
-                            onChange={handleDateChange}
-                            className="p-2 border rounded mr-4"
-                        />
-                        <button onClick={addOrder} className="bg-green-500 text-white p-2 rounded">
-                            <FaPlus className="inline mr-2" /> Agregar Orden
-                        </button>
+                <div className="flex flex-col md:flex-row gap-8">
+                    <div className="w-full md:w-1/2 bg-white shadow-lg rounded-lg overflow-hidden">
+                        <h2 className="text-2xl font-semibold bg-yellow-100 text-black p-4">Ordenes recientes</h2>
+                        <ul className="divide-y divide-gray-200">
+                            {orders.map((order) => (
+                                <li
+                                    key={order.id}
+                                    className="flex justify-between items-center p-4 hover:bg-gray-50 cursor-pointer transition duration-150 ease-in-out"
+                                    onClick={() => selectOrder(order.id)}
+                                >
+                                    <div>
+                                        <p className="text-lg font-semibold text-gray-800">Pedido #{order?.id}</p>
+                                        <p className="text-sm text-gray-600">Items: {order?.items.length} - Total: ${order?.total}</p>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {orders.map(order => (
-                            <div key={order.id} className="bg-white p-4 rounded shadow">
-                                <h3 className="text-xl font-bold mb-2">Orden #{order.id}</h3>
-                                <p className="mb-2">Estado: {order.status}</p>
-                                <button onClick={() => editOrder(order.id)} className="bg-yellow-500 text-white p-2 rounded mr-2">
-                                    <FaEdit className="inline mr-2" /> Editar
-                                </button>
-                                <button onClick={() => deleteOrder(order.id)} className="bg-red-500 text-white p-2 rounded">
-                                    <FaTrash className="inline mr-2" /> Eliminar
-                                </button>
+                    <div className="w-full md:w-1/2 bg-white shadow-lg rounded-lg overflow-hidden">
+                        {selectedOrder ? (
+                            <div className="p-6">
+                                <div className="flex justify-between items-center mb-6">
+                                    <h2 className="text-2xl font-semibold text-gray-800">Detalles del Pedido #{selectedOrder.id}</h2>
+                                    <button
+                                        onClick={() => handleUpdateOrder(selectedOrder.id)}
+                                        className="bg-green-300 text-white px-4 py-2 rounded-full transition duration-300 flex items-center"
+                                    >
+                                        <FaEdit className="mr-2" /> Editar Orden
+                                    </button>
+                                </div>
+                                <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                                    <h3 className="text-xl font-medium mb-4 text-gray-700">Ítems del pedido:</h3>
+                                    <ul className="space-y-4">
+                                        {selectedOrder.items.map((item, index) => (
+                                            <li key={index} className="bg-blue-100 shadow rounded-lg p-4 hover:shadow-md transition-shadow duration-300">
+                                                <h4 className="text-lg font-semibold text-blue-900 mb-2">{item.product.name}</h4>
+                                                <div className="flex justify-between items-center text-sm">
+                                                    <span className="font-medium text-black">Precio: ${item.product.price}</span>
+                                                    <span className="bg-gray-200 px-3 py-1 rounded-full text-black">Cantidad: {item.quantity}</span>
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                <div className="flex justify-end space-x-4">
+                                    <button
+                                        onClick={() => openDeleteDialog(selectedOrder.id)}
+                                        className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition duration-300 flex items-center"
+                                    >
+                                        <FaTrash className="mr-2" /> Eliminar
+                                    </button>
+                                    <button
+                                        className="bg-secondary text-white px-4 py-2 rounded-full  transition duration-300"
+                                    >
+                                        Cerrar Orden
+                                    </button>
+                                </div>
                             </div>
-                        ))}
+                        ) : (
+                            <div className="p-6 text-center text-gray-500">
+                                <FaTimes className="mx-auto text-4xl mb-4" />
+                                <p className="text-xl">Seleccione un pedido para ver los detalles</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
-
-            <Transition appear show={isOpen} as={Fragment}>
-                <Dialog as="div" className="relative z-10" onClose={closeDialog}>
+            <OrderModal
+                isModalOpen={isModalOpen}
+                formData={formData}
+                handleInputChange={handleInputChange}
+                handleSubmit={handleSubmit}
+                closeModal={closeModal}
+            />
+            <Transition appear show={isDeleteDialogOpen} as={Fragment}>
+                <Dialog as="div" className="relative z-10" onClose={closeDeleteDialog}>
                     <Transition.Child
                         as={Fragment}
                         enter="ease-out duration-300"
@@ -187,71 +235,33 @@ export default function BranchDashboard() {
                                 leaveFrom="opacity-100 scale-100"
                                 leaveTo="opacity-0 scale-95"
                             >
-                                <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-8 text-left align-middle shadow-xl transition-all">
+                                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                                     <Dialog.Title
                                         as="h3"
-                                        className="text-2xl font-bold leading-6 text-gray-900 mb-6"
+                                        className="text-lg font-medium leading-6 text-gray-900"
                                     >
-                                        {editingTable ? 'Editar Mesa' : 'Agregar Nueva Mesa'}
+                                        Confirmar eliminación
                                     </Dialog.Title>
-                                    <div className="mt-4 space-y-6">
-                                        <div>
-                                            <label htmlFor="capacity" className="block text-sm font-medium text-gray-700 mb-2">
-                                                Capacidad
-                                            </label>
-                                            <input
-                                                type="number"
-                                                id="capacity"
-                                                name="capacity"
-                                                value={newTable.capacity}
-                                                onChange={handleInputChange}
-                                                placeholder="Ingrese la capacidad de la mesa"
-                                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-lg p-3"
-                                            />
-                                        </div>
-                                        <div className="flex items-center">
-                                            <input
-                                                type="checkbox"
-                                                id="reservable"
-                                                name="reservable"
-                                                checked={newTable.reservable}
-                                                onChange={handleInputChange}
-                                                className="h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                            />
-                                            <label htmlFor="reservable" className="ml-3 block text-lg font-medium text-gray-700">
-                                                Reservable
-                                            </label>
-                                        </div>
-                                        <div>
-                                            <label htmlFor="inCharge" className="block text-sm font-medium text-gray-700 mb-2">
-                                                Persona a cargo
-                                            </label>
-                                            <input
-                                                type="text"
-                                                id="inCharge"
-                                                name="inCharge"
-                                                value={newTable.inCharge}
-                                                onChange={handleInputChange}
-                                                placeholder="Nombre de la persona a cargo"
-                                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-lg p-3"
-                                            />
-                                        </div>
+                                    <div className="mt-2">
+                                        <p className="text-sm text-gray-500">
+                                            ¿Está seguro de que desea eliminar esta orden? Esta acción no se puede deshacer.
+                                        </p>
                                     </div>
 
-                                    <div className="mt-8 flex justify-end space-x-4">
+                                    <div className="mt-4 flex justify-end space-x-3">
                                         <button
                                             type="button"
-                                            className="inline-flex justify-center rounded-md border border-transparent bg-gray-200 px-6 py-3 text-lg font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
-                                            onClick={closeDialog}
+                                            className="inline-flex justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-red-900 hover:bg-primaryDark focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                                            onClick={handleDelete}
                                         >
-                                            Cancelar
+                                            Eliminar
                                         </button>
                                         <button
                                             type="button"
-                                            className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-6 py-3 text-lg font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                                            onClick={addOrUpdateTable}
+                                            className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                                            onClick={closeDeleteDialog}
                                         >
-                                            {editingTable ? 'Actualizar Mesa' : 'Agregar Mesa'}
+                                            Cancelar
                                         </button>
                                     </div>
                                 </Dialog.Panel>

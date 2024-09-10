@@ -1,17 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import Product from './Product';
 import ProductExtra from './ProductExtra';
-// import apiClient from '@/pages/utils/apiClient';
+import apiClient from '@/pages/utils/apiClient';
 
 const OrderItem = ({ orderId, product, initialQuantity = 1, onQuantityChange }) => {
     const [quantity, setQuantity] = useState(initialQuantity);
     const [commentary, setCommentary] = useState('');
     const [extras, setExtras] = useState([]);
     const [total, setTotal] = useState(0);
+    const [order, setOrder] = useState({
+        paid: false,
+        delivered: false,
+        delivered_at: null,
+        payment_method: '',
+        discount: 0,
+        status_closed: false
+    });
 
     useEffect(() => {
         calculateTotal();
+        fetchOrderDetails();
     }, [quantity, extras]);
+
+    const fetchOrderDetails = async () => {
+        try {
+            const response = await apiClient.get(`/order/${orderId}`);
+            setOrder(response.data);
+        } catch (error) {
+            console.error('Error fetching order details:', error);
+        }
+    };
 
     const handleQuantityChange = (newQuantity) => {
         setQuantity(newQuantity);
@@ -36,29 +54,33 @@ const OrderItem = ({ orderId, product, initialQuantity = 1, onQuantityChange }) 
         setTotal(itemTotal);
     };
 
-    // const createOrderItem = async () => {
-    //     try {
-    //         const response = await apiClient.post('/order/create', {
-    //             order: orderId,
-    //             product: product.id,
-    //             quantity: quantity,
-    //             extras: extras.map(extra => extra.id),
-    //             commentary: commentary
-    //         });
-    //         console.log('Order item created:', response.data);
-    //     } catch (error) {
-    //         console.error('Error creating order item:', error);
-    //     }
-    // };
+    const updateOrder = async () => {
+        try {
+            const response = await apiClient.put(`/order/${orderId}`, {
+                ...order,
+                commentary: commentary
+            });
+            console.log('Order updated:', response.data);
+        } catch (error) {
+            console.error('Error updating order:', error);
+        }
+    };
 
-    // const getOrderItemDetails = async (orderItemId) => {
-    //     try {
-    //         const response = await apiClient.get(`/order/${orderItemId}`);
-    //         console.log('Order item details:', response.data);
-    //     } catch (error) {
-    //         console.error('Error fetching order item details:', error);
-    //     }
-    // };
+    const createOrderItem = async () => {
+        try {
+            const response = await apiClient.post('/order-item/create', {
+                order: orderId,
+                product: product.id,
+                quantity: quantity,
+                extras: extras.map(extra => extra.id),
+                commentary: commentary
+            });
+            console.log('Order item created:', response.data);
+            updateOrder();
+        } catch (error) {
+            console.error('Error creating order item:', error);
+        }
+    };
 
     return (
         <div className="order-item border rounded-lg p-4 mb-4">
@@ -108,9 +130,21 @@ const OrderItem = ({ orderId, product, initialQuantity = 1, onQuantityChange }) 
                 <p className="font-bold">Total: ${total.toFixed(2)}</p>
             </div>
 
-            {/* Uncomment and use these buttons when ready to implement API calls */}
-            {/* <button onClick={createOrderItem}>Create Order Item</button> */}
-            {/* <button onClick={() => getOrderItemDetails(orderItemId)}>Get Order Item Details</button> */}
+            <div className="mt-4">
+                <h4 className="font-semibold mb-1">Order Details:</h4>
+                <p>Paid: {order.paid ? 'Yes' : 'No'}</p>
+                <p>Delivered: {order.delivered ? 'Yes' : 'No'}</p>
+                <p>Payment Method: {order.payment_method || 'Not set'}</p>
+                <p>Discount: {order.discount}%</p>
+                <p>Status: {order.status_closed ? 'Closed' : 'Open'}</p>
+            </div>
+
+            <button
+                onClick={createOrderItem}
+                className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            >
+                Add to Order
+            </button>
         </div>
     );
 };

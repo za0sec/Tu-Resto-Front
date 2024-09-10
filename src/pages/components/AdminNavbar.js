@@ -60,9 +60,11 @@ export default function AdminNavbar() {
                 <div className="relative pt-6 px-4 sm:px-6 lg:px-8 shadow-lg py-4">
                     <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between sm:h-10 lg:justify-start bg-white shadow-md px-10 py-10" aria-label="Global">
                         <div className="flex items-center justify-start space-x-4 lg:flex-grow">
-                            <div className="bg-blue-500 p-2 rounded-full mr-10">
-                                <img className="h-8 w-8" src="/svg/fork.svg" alt="Icono" />
-                            </div>
+                            <Link href="/admin/dashboard">
+                                <div className="bg-blue-500 p-2 rounded-full mr-10 cursor-pointer">
+                                    <img className="h-8 w-8" src="/svg/fork.svg" alt="Icono" />
+                                </div>
+                            </Link>
                             <div className="hidden md:flex md:space-x-8">
                                 {navigation.map((item) => (
                                     <Link key={item.name} href={item.href}>

@@ -27,7 +27,8 @@ export default function Dashboard() {
             try {
                 const first_name = Cookies.get('user_first_name');
                 const response = await apiClient.get(`/user/profile`);
-                const ordersData = await apiClient.get(`/orders/daily/${date.toISOString().split('T')[0]}`);
+                // const ordersData = await apiClient.get(`/orders/daily/${date.toISOString().split('T')[0]}`);
+                const ordersData = await apiClient.get(`/orders`);
                 setOrders(ordersData.data);
                 setUserData(response.data);
                 if (first_name) {
@@ -165,11 +166,11 @@ export default function Dashboard() {
                         </div>
                     )}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="bg-blue-100 p-4 rounded-lg">
+                        <div className="bg-blue-100 p-4 rounded-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                             <h3 className="text-xl font-semibold mb-2">Pedidos Hoy</h3>
                             <p className="text-3xl font-bold">{orders?.length}</p>
                         </div>
-                        <div className="bg-green-100 p-4 rounded-lg">
+                        <div className="bg-green-100 p-4 rounded-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                             <h3 className="text-xl font-semibold mb-2">Ingresos</h3>
                             <p className="text-3xl font-bold">${orders?.reduce((total, order) => total + order.total, 0)}</p>
                         </div>
