@@ -135,7 +135,7 @@ export default function Dashboard() {
                             Hola, <span className="text-primary">{firstName}</span>
                         </h1>
                         <div className="flex items-center space-x-4">
-                            <button onClick={openModal} className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primaryDark transition duration-300">
+                            <button onClick={openModal} className="bg-primary text-white px-4 py-2 rounded-full hover:bg-primaryDark transition duration-300">
                                 Añadir Empleado
                             </button>
                             <DatePicker

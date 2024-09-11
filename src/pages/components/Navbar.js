@@ -6,7 +6,7 @@ import Link from 'next/link';
 const navigation = [
     { name: 'Funcionalidades', href: '/branchemployee/dashboard' },
     { name: 'Dispositivos', href: '#' },
-    { name: 'Suscripciones', href: '/Subscription' },
+    { name: 'Suscripciones', href: '/subscription' },
     { name: 'Contacto', href: '#' },
 ];
 

@@ -9,7 +9,6 @@ import { useRouter } from 'next/router';
 const navigation = [
     { name: 'Ordenes', href: '/branchemployee/dashboard' },
     { name: 'Mesas & Ordenes', href: '/branchemployee/tables' },
-    { name: 'Crear Orden', href: '/branchemployee/orders' },
 ];
 
 export default function AdminNavbar() {

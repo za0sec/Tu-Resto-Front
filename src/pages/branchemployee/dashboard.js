@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import EmployeeNavbar from '../components/EmployeeNavbar';
 import apiClient from "@/pages/utils/apiClient";
-import OrderModal from '../components/createOrderDialog';
+// import OrderModal from '../components/createOrderDialog';
+import OrderModal from '@/pages/components/CreateOrderDialog';
 import { useRouter } from 'next/router';
 import { FaTrash, FaEdit, FaPlus, FaTimes } from 'react-icons/fa';
 import { Dialog, Transition } from '@headlessui/react';
@@ -161,7 +162,7 @@ export default function BranchDashboard() {
                                     <h2 className="text-2xl font-semibold text-gray-800">Detalles del Pedido #{selectedOrder.id}</h2>
                                     <button
                                         onClick={() => handleUpdateOrder(selectedOrder.id)}
-                                        className="bg-green-300 text-white px-4 py-2 rounded-full transition duration-300 flex items-center"
+                                        className="bg-secondary text-white px-4 py-2 rounded-full transition hover:bg-secondaryDark duration-300 flex items-center"
                                     >
                                         <FaEdit className="mr-2" /> Editar Orden
                                     </button>
@@ -183,12 +184,12 @@ export default function BranchDashboard() {
                                 <div className="flex justify-end space-x-4">
                                     <button
                                         onClick={() => openDeleteDialog(selectedOrder.id)}
-                                        className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition duration-300 flex items-center"
+                                        className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition duration-300 flex items-center justify-center"
                                     >
-                                        <FaTrash className="mr-2" /> Eliminar
+                                        <FaTrash/>
                                     </button>
                                     <button
-                                        className="bg-secondary text-white px-4 py-2 rounded-full  transition duration-300"
+                                        className="bg-secondary text-white font-medium px-4 py-2 rounded-full hover:bg-secondaryDark"
                                     >
                                         Cerrar Orden
                                     </button>
