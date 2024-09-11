@@ -3,7 +3,8 @@ import Navbar from './components/Navbar';
 import HeroSection from './components/HeroSection';
 import LoginModal from "./components/LoginModal";
 import { useRouter } from "next/router";
-import Subscription from './components/Subscription';
+import Subscription from './components/subscription';
+import Link from 'next/link';
 
 export default function Home({ token = true }) {
     const router = useRouter();
@@ -29,7 +30,7 @@ export default function Home({ token = true }) {
     }
     return (
         <div className="min-h-screen flex flex-col overflow-hidden">
-            <Navbar openModal={openModal} />
+            <Navbar />
             <div className="relative w-full">
                 {/* Fondo con curvas suaves */}
                 <div className="absolute inset-0 bg-gradient-to-b from-white to-purple-100 transform skew-y-3"></div>
