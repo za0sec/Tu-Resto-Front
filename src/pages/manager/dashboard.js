@@ -27,8 +27,8 @@ export default function Dashboard() {
             try {
                 const first_name = Cookies.get('user_first_name');
                 const response = await apiClient.get(`/user/profile`);
-                // const ordersData = await apiClient.get(`/orders/daily/${date.toISOString().split('T')[0]}`);
-                const ordersData = await apiClient.get(`/orders`);
+                const ordersData = await apiClient.get(`/orders/daily/${date.toISOString().split('T')[0]}`);
+                // const ordersData = await apiClient.get(`/orders`);
                 setOrders(ordersData.data);
                 setUserData(response.data);
                 if (first_name) {
@@ -127,7 +127,7 @@ export default function Dashboard() {
 
     return (
         <div className="bg-gray-100 min-h-screen flex flex-col overflow-auto">
-            <ManagerNavbar />
+            <ManagerNavbar restaurantId={userData?.restaurant?.id} />
             <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 mt-16 mb-24">
                 <div className="bg-white p-6 rounded-lg shadow-lg mb-10">
                     <div className="flex justify-between items-center mb-6">

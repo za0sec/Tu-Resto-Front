@@ -2,7 +2,7 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/branchemployee/dashboard": "pages/branchemployee/dashboard.js",
   "/branchemployee/editorder": "pages/branchemployee/editorder.js",
-  "/manager/dashboard": "pages/manager/dashboard.js"
+  "/branchemployee/dashboard": "pages/branchemployee/dashboard.js",
+  "/manager/products/category": "pages/manager/products/category.js"
 }

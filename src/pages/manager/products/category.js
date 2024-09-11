@@ -5,6 +5,8 @@ import ManagerNavbar from '../../components/ManagerNavbar';
 import apiClient from "../../utils/apiClient";
 import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
+import { jwtDecode } from 'jwt-decode';
+import Cookies from 'js-cookie';
 
 export default function CategoryProducts() {
     const [categories, setCategories] = useState([]);
@@ -19,14 +21,32 @@ export default function CategoryProducts() {
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
     const [newCategory, setNewCategory] = useState({ name: '', description: '', icon: '', photo: null });
     const router = useRouter();
+    const [restaurantId, setRestaurantId] = useState(null);
 
     useEffect(() => {
-        fetchCategories();
+        const token = Cookies.get('accessToken');
+        if (token) {
+            try {
+                const decodedToken = jwtDecode(token);
+                setRestaurantId(decodedToken.restaurant_id);
+            } catch (error) {
+                console.error('Error al decodificar el token:', error);
+                setError('Error al obtener la información del restaurante');
+            }
+        } else {
+            setError('No se encontró el token de acceso');
+        }
     }, []);
+
+    useEffect(() => {
+        if (restaurantId) {
+            fetchCategories();
+        }
+    }, [restaurantId]);
 
     const fetchCategories = async () => {
         try {
-            const response = await apiClient.get('/categories');
+            const response = await apiClient.get(`/restaurant/${restaurantId}/categories`);
             if (response.status === 200) {
                 setCategories(response.data);
                 if (response.data.length > 0) {
@@ -118,7 +138,7 @@ export default function CategoryProducts() {
                 formData.append('photo', file);
             }
 
-            const response = await apiClient.post('/category/create', formData, {
+            const response = await apiClient.post(`/restaurant/${restaurantId}/category/create`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

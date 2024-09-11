@@ -6,21 +6,21 @@ import Cookies from "js-cookie";
 import { useRouter } from 'next/router';
 
 
-const navigation = [
-    { name: 'Dashboard', href: '/manager/dashboard' },
-    { name: 'Empleados', href: '/manager/employees' },
-    { name: 'Productos', href: '/manager/products/category' },
-    { name: 'Mesas', href: '/manager/tables' },
-    { name: 'Ordenes', href: '/manager/orders' },
-];
-
-export default function AdminNavbar() {
+export default function ManagerNavbar({ restaurantId }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const router = useRouter();
     const [firstName, setFirstName] = useState(null);
     const [lastName, setLastName] = useState(null);
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
+
+    const navigation = [
+        { name: 'Dashboard', href: '/manager/dashboard' },
+        { name: 'Empleados', href: '/manager/employees' },
+        { name: 'Productos', href: `/manager/products/category` },
+        { name: 'Mesas', href: '/manager/tables' },
+        { name: 'Ordenes', href: '/manager/orders' },
+    ];
 
     const handleLogout = () => {
         const allCookies = Cookies.get();

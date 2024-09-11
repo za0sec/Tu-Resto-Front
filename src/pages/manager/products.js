@@ -4,7 +4,7 @@ import apiClient from "../utils/apiClient";
 import { FaTag, FaInfo, FaImage } from 'react-icons/fa';
 import * as FaIcons from 'react-icons/fa';
 
-export default function Categories() {
+export default function Categories({ restaurantId }) {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -19,7 +19,7 @@ export default function Categories() {
 
     const fetchCategories = async () => {
         try {
-            const response = await apiClient.get('/categories');
+            const response = await apiClient.get(`/restaurant/${restaurantId}/categories`);
             if (response.status === 200) {
                 setCategories(response.data);
             } else {

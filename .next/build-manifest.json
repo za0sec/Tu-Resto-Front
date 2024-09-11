@@ -31,11 +31,6 @@
       "static/chunks/webpack.js",
       "static/chunks/main.js",
       "static/chunks/pages/branchemployee/editorder.js"
-    ],
-    "/manager/dashboard": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/manager/dashboard.js"
     ]
   },
   "ampFirstPages": []

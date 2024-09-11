@@ -6,6 +6,8 @@ import OrderItemDialog from '../components/OrderItemCreationDialog';
 import CategorySidebar from '../components/CategorySidebar';
 import OrderCreationPreview from '../components/OrderCreationPreview';
 import ProductList from '../components/OrderCreationProductList';
+import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode';
 
 export default function EditOrder() {
     const router = useRouter();
@@ -22,15 +24,37 @@ export default function EditOrder() {
     const [selectedExtras, setSelectedExtras] = useState([]);
     const [order, setOrder] = useState([]);
     const [editingIndex, setEditingIndex] = useState(null);
+    const [restaurantId, setRestaurantId] = useState(null);
+    const [error, setError] = useState(null);
 
+
+    useEffect(() => {
+        const token = Cookies.get('accessToken');
+        if (token) {
+            try {
+                const decodedToken = jwtDecode(token);
+                setRestaurantId(decodedToken.restaurant_id);
+            } catch (error) {
+                console.error('Error al decodificar el token:', error);
+                setError('Error al obtener la información del restaurante');
+            }
+        } else {
+            setError('No se encontró el token de acceso');
+        }
+    }, []);
 
     useEffect(() => {
         const fetchOrderData = async () => {
             try {
                 const response = await apiClient.get(`/order/takeaway/${orderId}`);
-                setOrder(response.data.order_items);
+                if (response.status === 200) {
+                    setOrder(response.data.order_items);
+                } else {
+                    setError('Error al obtener los datos de la orden');
+                }
             } catch (error) {
                 console.error('Error al obtener los datos de la orden:', error);
+                setError('Error al obtener los datos de la orden');
             }
         };
 
@@ -42,23 +66,37 @@ export default function EditOrder() {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await apiClient.get('/categories/');
-                setCategories(response.data);
+                if (restaurantId) {
+                    const response = await apiClient.get(`/restaurant/${restaurantId}/categories`);
+                    if (response.status === 200) {
+                        setCategories(response.data);
+                    } else {
+                        setError('Error al obtener las categorías');
+                    }
+                }
             } catch (error) {
                 console.error('Error fetching categories:', error);
+                setError('Error al obtener las categorías');
             }
         };
 
         fetchCategories();
-    }, []);
+    }, [restaurantId]);
 
     const handleCategoryClick = async (category) => {
         setSelectedCategory(category);
         try {
-            const response = await apiClient.get(`/category/${category.id}`);
-            setProducts(response.data.products);
+            if (restaurantId) {
+                const response = await apiClient.get(`/restaurant/${restaurantId}/category/${category.id}`);
+                if (response.status === 200) {
+                    setProducts(response.data.products);
+                } else {
+                    setError('Error al obtener los productos');
+                }
+            }
         } catch (error) {
             console.error('Error fetching products for category:', error);
+            setError('Error al obtener los productos');
         }
     };
 
