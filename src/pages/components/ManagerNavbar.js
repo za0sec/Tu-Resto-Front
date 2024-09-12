@@ -6,20 +6,21 @@ import Cookies from "js-cookie";
 import { useRouter } from 'next/router';
 
 
-const navigation = [
-    { name: 'Dashboard', href: '/admin/dashboard' },
-    { name: 'Restaurantes', href: '/admin/restaurants' },
-    { name: 'Empresas', href: '/admin/company' },
-    { name: 'Help', href: '/help' },
-];
-
-export default function AdminNavbar() {
+export default function ManagerNavbar({ restaurantId }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const router = useRouter();
     const [firstName, setFirstName] = useState(null);
     const [lastName, setLastName] = useState(null);
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
+
+    const navigation = [
+        { name: 'Dashboard', href: '/manager/dashboard' },
+        { name: 'Empleados', href: '/manager/employees' },
+        { name: 'Productos', href: `/manager/products/category` },
+        { name: 'Mesas', href: '/manager/tables' },
+        { name: 'Ordenes', href: '/manager/orders' },
+    ];
 
     const handleLogout = () => {
         const allCookies = Cookies.get();
@@ -60,7 +61,7 @@ export default function AdminNavbar() {
                 <div className="relative pt-6 px-4 sm:px-6 lg:px-8 shadow-lg py-4">
                     <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between sm:h-10 lg:justify-start bg-white shadow-md px-10 py-10" aria-label="Global">
                         <div className="flex items-center justify-start space-x-4 lg:flex-grow">
-                            <Link href="/admin/dashboard">
+                            <Link href="/manager/dashboard">
                                 <div className="bg-blue-500 p-2 rounded-full mr-10 cursor-pointer">
                                     <img className="h-8 w-8" src="/svg/fork.svg" alt="Icono" />
                                 </div>

@@ -1,90 +1,96 @@
-import {useEffect, useState} from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import config from "@/pages/utils/config";
-import apiClient from "@/pages/utils/apiClient";
+import Navbar from './components/Navbar';
+import apiClient, { publicApiClient } from './utils/apiClient';
 
 export default function ResetPassword() {
-    const router = useRouter();
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
-    const [token, setToken] = useState('');
+    const [success, setSuccess] = useState(false);
+    const router = useRouter();
+    const { uidb64, token } = router.query;
 
-    useEffect(() => {
-        if (router.isReady) {
-            const { token } = router.query;
-            if (token) {
-                setToken(token);
-            } else {
-                setError('Token inválido o ausente');
-            }
-        }
-    }, [router.isReady, router.query]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         if (password !== confirmPassword) {
             setError('Las contraseñas no coinciden');
             return;
         }
-
-        console.log(token);
-
         try {
-            const response = await apiClient.post('/reset-password', {
-                token,
-                password,
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/reset-password/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    uidb64,
+                    token,
+                    password,
+                    confirm_password: confirmPassword
+                })
             });
-
-            if (response.status === 200) {
-                setSuccess('Contraseña actualizada con éxito');
-                setTimeout(() => router.push('/'), 2000);
+            if (response.ok) {
+                setSuccess(true);
+                setError('');
+                setTimeout(() => {
+                    router.push('/');
+                }, 1000);
             } else {
-                setError(response.data.message || 'Error al restablecer la contraseña');
+                throw new Error('Error en la respuesta del servidor');
             }
         } catch (error) {
-            setError(`Error de red. Inténtalo de nuevo.: ${error}`);
+            setError('Error al restablecer la contraseña. Por favor, inténtelo de nuevo.');
         }
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-900">
-            <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
-                <h1 className="text-3xl font-bold mb-6 text-center text-primary">Restablecer Contraseña</h1>
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <label className="block text-gray-300" htmlFor="password">Nueva Contraseña</label>
-                        <input
-                            type="password"
-                            id="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-4 py-2 mt-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary"
-                            required
-                        />
+        <div className="min-h-screen bg-gray-100">
+            <Navbar />
+            <div className="max-w-md mx-auto mt-20 bg-white p-8 rounded-lg shadow-md">
+                <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">Restablecer Contraseña</h2>
+                {success ? (
+                    <div className="text-green-600 text-center mb-4">
+                        Contraseña restablecida con éxito. Puede iniciar sesión ahora.
                     </div>
-                    <div className="mb-4">
-                        <label className="block text-gray-300" htmlFor="confirmPassword">Confirmar Contraseña</label>
-                        <input
-                            type="password"
-                            id="confirmPassword"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            className="w-full px-4 py-2 mt-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary"
-                            required
-                        />
-                    </div>
-                    {error && <p className="text-red-500 mb-4">{error}</p>}
-                    {success && <p className="text-green-500 mb-4">{success}</p>}
-                    <button
-                        type="submit"
-                        className="w-full bg-primary text-white py-2 rounded-md hover:bg-primary-dark"
-                    >
-                        Restablecer Contraseña
-                    </button>
-                </form>
+                ) : (
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div>
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                                Nueva Contraseña
+                            </label>
+                            <input
+                                type="password"
+                                id="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                                Confirmar Nueva Contraseña
+                            </label>
+                            <input
+                                type="password"
+                                id="confirmPassword"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                required
+                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                            />
+                        </div>
+                        {error && <p className="text-red-500 text-sm">{error}</p>}
+                        <button
+                            type="submit"
+                            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        >
+                            Restablecer Contraseña
+                        </button>
+                    </form>
+                )}
             </div>
         </div>
     );

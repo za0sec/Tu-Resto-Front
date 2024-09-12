@@ -74,28 +74,23 @@ export default function Dashboard() {
     }, []);
 
     if (loading) {
-        return <div>Cargando...</div>;
+        return (
+            <div className="min-h-screen bg-gray-100 flex justify-center items-center">
+                <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+        );
     }
 
     if (error) {
-        return <div>Error: {error}</div>;
+        return (
+            <div className="min-h-screen bg-gray-100 flex justify-center items-center">
+                <div className="bg-white p-6 rounded-lg shadow-lg">
+                    <h2 className="text-2xl font-bold text-red-600 mb-4">Error</h2>
+                    <p>{error}</p>
+                </div>
+            </div>
+        );
     }
-
-    function handleDateChange(selectedDate) {
-        setDate(selectedDate);
-    }
-
-    const navigateToemployee = (employeeId) => {
-    };
-
-    const openModal = () => {
-        setIsModalOpen(true);
-    };
-
-    const closeModal = () => {
-        setIsModalOpen(false);
-        setNewRestaurant({ name: '', website: '' });
-    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -120,74 +115,12 @@ export default function Dashboard() {
     return (
         <div className="bg-gray-100 min-h-screen flex flex-col overflow-auto">
             <AdminNavbar />
-            <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 mt-16 mb-24">
+            <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 mt-24 mb-24">
                 <div className="flex justify-between items-center mb-10">
-                    <h1 className="text-3xl font-bold text-gray-800">
+                    <h1 className="text-5xl font-bold text-gray-800">
                         Buenos días, <span className="text-primary">{firstName}</span>
                     </h1>
-                    <button
-                        onClick={openModal}
-                        className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primaryDark transition duration-300 ease-in-out"
-                    >
-                        Agregar Nuevo Restaurante
-                    </button>
                 </div>
-
-                {isModalOpen && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                        <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
-                            <div className="flex justify-between items-center p-6 border-b">
-                                <h2 className="text-2xl font-bold text-gray-900">Agregar Nuevo Restaurante</h2>
-                                <button onClick={closeModal} className="text-gray-400 hover:text-gray-500">
-                                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </div>
-                            <form onSubmit={handleSubmit} className="p-6">
-                                <div className="mb-4">
-                                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Nombre del Restaurante</label>
-                                    <input
-                                        type="text"
-                                        id="name"
-                                        name="name"
-                                        value={newRestaurant.name}
-                                        onChange={handleInputChange}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-                                        required
-                                    />
-                                </div>
-                                <div className="mb-6">
-                                    <label htmlFor="website" className="block text-sm font-medium text-gray-700 mb-2">Sitio Web</label>
-                                    <input
-                                        type="url"
-                                        id="website"
-                                        name="website"
-                                        value={newRestaurant.website}
-                                        onChange={handleInputChange}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-                                        required
-                                    />
-                                </div>
-                                <div className="flex justify-end">
-                                    <button
-                                        type="button"
-                                        onClick={closeModal}
-                                        className="mr-3 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-                                    >
-                                        Cancelar
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primaryDark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-                                    >
-                                        Guardar
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                )}
 
                 <div className="mb-10">
                     <div className="bg-white p-6 rounded-lg shadow-lg">
@@ -282,7 +215,7 @@ export default function Dashboard() {
                                             <td className="px-6 py-4 whitespace-nowrap">{restaurant.name}</td>
                                             <td className="px-6 py-4 whitespace-nowrap">{restaurant.location}</td>
                                             <td className="px-6 py-4 whitespace-nowrap">{restaurant.plan}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap">{restaurant.employees.length}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{restaurant?.employees?.length}</td>
                                         </tr>
                                     ))}
                                 </tbody>
