@@ -3,8 +3,9 @@ import ManagerNavbar from '../components/ManagerNavbar';
 import apiClient from "../utils/apiClient";
 import { FaTag, FaInfo, FaImage } from 'react-icons/fa';
 import * as FaIcons from 'react-icons/fa';
+import withAuth from '@/pages/components/withAuth';
 
-export default function Categories({ restaurantId }) {
+function Categories({ restaurantId }) {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -229,3 +230,5 @@ export default function Categories({ restaurantId }) {
         </div>
     );
 }
+
+export default withAuth(Categories, ['Manager']);

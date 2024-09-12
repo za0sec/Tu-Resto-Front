@@ -7,8 +7,9 @@ import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { jwtDecode } from 'jwt-decode';
 import Cookies from 'js-cookie';
+import withAuth from '@/pages/components/withAuth';
 
-export default function CategoryProducts() {
+function CategoryProducts() {
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -534,3 +535,5 @@ export default function CategoryProducts() {
         </div>
     );
 }
+
+export default withAuth(CategoryProducts, ['Manager']);
