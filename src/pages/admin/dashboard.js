@@ -8,8 +8,10 @@ import apiClient from "@/pages/utils/apiClient";
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
 import { FaChevronDown } from "react-icons/fa";
+import withAuth from '@/pages/components/withAuth';
 
-export default function Dashboard() {
+
+function Dashboard() {
     const router = useRouter();
     const [recentActivities, setRecentActivities] = useState([]);
     const [firstName, setFirstName] = useState(null);
@@ -244,3 +246,5 @@ export default function Dashboard() {
         </div>
     );
 }
+
+export default withAuth(Dashboard, ['Admin']);

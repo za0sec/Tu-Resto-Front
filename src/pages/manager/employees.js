@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import ManagerNavbar from '../components/ManagerNavbar';
 import apiClient from "../utils/apiClient";
 import { FaUser, FaPhone, FaCalendar, FaBuilding } from 'react-icons/fa';
+import withAuth from '@/pages/components/withAuth';
 
-export default function Employees() {
+function Employees() {
     const [employees, setEmployees] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -271,3 +272,5 @@ export default function Employees() {
         </div>
     );
 }
+
+export default withAuth(Employees, ['Manager']);

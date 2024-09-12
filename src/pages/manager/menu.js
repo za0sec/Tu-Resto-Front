@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import EmployeeNavbar from '../components/EmployeeNavbar';
 import Product from '../components/Product';
 import apiClient from "@/pages/utils/apiClient";
+import withAuth from '@/pages/components/withAuth';
 
-export default function Menu() {
+function Menu() {
     const [categories, setCategories] = useState([]);
     const [products, setProducts] = useState([]);
     const [newCategory, setNewCategory] = useState('');
@@ -165,3 +166,5 @@ export default function Menu() {
         </div>
     );
 }
+
+export default withAuth(Menu, ['Manager']);

@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import AdminNavbar from '../components/AdminNavbar';
 import apiClient from "../utils/apiClient";
 import { FaMapMarkerAlt, FaUsers, FaUtensils } from 'react-icons/fa';
+import withAuth from '@/pages/components/withAuth';
 
-export default function Restaurants() {
+function Restaurants() {
     const [restaurants, setRestaurants] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -215,3 +216,5 @@ export default function Restaurants() {
         </div>
     );
 }
+
+export default withAuth(Restaurants, ['Admin']);

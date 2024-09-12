@@ -4,7 +4,9 @@ import HeroSection from './components/HeroSection';
 import LoginModal from "./components/LoginModal";
 import { useRouter } from "next/router";
 import Subscription from './components/subscription';
-import Link from 'next/link';
+import Cookies from 'js-cookie';
+import { useEffect } from 'react';
+import config from "@/pages/utils/config";
 
 export default function Home({ token = true }) {
     const router = useRouter();
@@ -16,6 +18,39 @@ export default function Home({ token = true }) {
 
     const [loading, setLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    useEffect(() => {
+        const checkAuthAndRedirect = async () => {
+            const accessToken = Cookies.get('accessToken');
+            const userRole = Cookies.get('user_role');
+
+            if (accessToken) {
+                try {
+                    const response = await fetch(`${config.apiUrl}/user/profile`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${accessToken}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (response.ok && userRole) {
+                        router.replace(`/${userRole.toLowerCase()}/dashboard`);
+                    } else {
+                        Cookies.remove('accessToken');
+                        Cookies.remove('user_role');
+                    }
+                } catch (error) {
+                    console.error('Error al verificar el token:', error);
+                    Cookies.remove('accessToken');
+                    Cookies.remove('user_role');
+                }
+            }
+            // Si no hay token, el usuario se queda en la página de inicio
+        };
+
+        checkAuthAndRedirect();
+    }, [router]);
 
     function openModal() {
         setIsModalOpen(true);
@@ -30,7 +65,7 @@ export default function Home({ token = true }) {
     }
     return (
         <div className="min-h-screen flex flex-col overflow-hidden">
-            <Navbar />
+            <Navbar openModal={openModal} />
             <div className="relative w-full">
                 {/* Fondo con curvas suaves */}
                 <div className="absolute inset-0 bg-gradient-to-b from-white to-purple-100 transform skew-y-3"></div>
