@@ -24,7 +24,7 @@ const OrderItem = ({ orderId, product, initialQuantity = 1, onQuantityChange }) 
 
     const fetchOrderDetails = async () => {
         try {
-            const response = await apiClient.get(`/order/${orderId}`);
+            const response = await apiClient.get(`/branch/${branchId}/order/${orderId}`);
             setOrder(response.data);
         } catch (error) {
             console.error('Error fetching order details:', error);

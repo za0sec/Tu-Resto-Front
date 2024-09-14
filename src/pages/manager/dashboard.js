@@ -8,11 +8,13 @@ import apiClient from "@/pages/utils/apiClient";
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
 import withAuth from "@/pages/components/withAuth";
-import { FaChevronDown, FaBuilding } from "react-icons/fa";
-
+import { FaChevronDown, FaBuilding, FaPlus } from "react-icons/fa";
+import Reservation from '../components/Reservation';
+import ReservationList from './reservations';
+import NewBranchDialog from './newBranchDialog';
+import ActiveOrders from './dailyOrders';
 function Dashboard() {
     const router = useRouter();
-    const [recentActivities, setRecentActivities] = useState([]);
     const [firstName, setFirstName] = useState(null);
     const [supervisors, setSupervisors] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -21,19 +23,24 @@ function Dashboard() {
     const [userData, setUserData] = useState(null);
     const [orders, setOrders] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [employeeType, setEmployeeType] = useState('');
+    const [newBranch, setNewBranch] = useState({
+        name: '',
+        address: '',
+        phone: '',
+        restaurant: ''
+    });
 
     useEffect(() => {
         const fetchUserData = async () => {
             try {
                 const first_name = Cookies.get('user_first_name');
                 const response = await apiClient.get(`/user/profile`);
-                const ordersData = await apiClient.get(`/orders/daily/${date.toISOString().split('T')[0]}`);
-                // const ordersData = await apiClient.get(`/orders`);
-                setOrders(ordersData.data);
                 setUserData(response.data);
-                if (first_name) {
+                console.log(response.data);
+                if (first_name && response.data && response.data.restaurant) {
                     setFirstName(first_name);
+                    const ordersData = await apiClient.get(`/restaurant/${response.data.restaurant.id}/orders/daily/${date.toISOString().split('T')[0]}`);
+                    setOrders(ordersData.data);
                 } else {
                     router.push('/');
                 }
@@ -46,7 +53,7 @@ function Dashboard() {
         };
 
         fetchUserData();
-    }, [date]);
+    }, [date, router]);
 
     if (loading) {
         return (
@@ -71,8 +78,25 @@ function Dashboard() {
         setDate(selectedDate);
     }
 
-    const redirectToEmployees = () => {
-        router.push('/manager/employees');
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setNewBranch({ ...newBranch, [name]: value });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await apiClient.post('/branch/create', {
+                ...newBranch,
+                restaurant: userData.restaurant.id
+            });
+            if (response.status === 201) {
+                setIsModalOpen(false);
+                // Aquí puedes agregar lógica adicional después de crear la sucursal
+            }
+        } catch (error) {
+            console.error('Error al crear la sucursal:', error);
+        }
     };
 
     return (
@@ -85,8 +109,9 @@ function Dashboard() {
                             Hola, <span className="text-primary">{firstName}</span>
                         </h1>
                         <div className="flex items-center space-x-4">
-                            <button onClick={redirectToEmployees} className="bg-primary text-white px-4 py-2 rounded-full hover:bg-primaryDark transition duration-300">
-                                Añadir Empleado
+                            <button onClick={() => setIsModalOpen(true)} className="bg-primary text-white px-4 py-2 rounded-full hover:bg-primaryDark transition duration-300 flex items-center">
+                                <FaPlus className="mr-2" />
+                                Añadir Sucursal
                             </button>
                             <DatePicker
                                 selected={date}
@@ -130,25 +155,12 @@ function Dashboard() {
                         </div>
                     </div>
                 </div>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div className="bg-white p-6 rounded-lg shadow-lg">
-                        <h2 className="text-2xl font-bold text-gray-800 mb-4">Pedidos Activos</h2>
-                        <ul className="space-y-4">
-                            {orders.map((order) => (
-                                <li key={order} className="flex justify-between items-center border-b pb-2">
-                                    <div>
-                                        <p className="font-semibold">Pedido  #{order?.id}</p>
-                                        <p className="text-sm text-gray-600"> {order?.items.length} items - ${order?.total}</p>
-                                    </div>
-                                    <span className="bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full text-sm">
-                                        En Preparación
-                                    </span>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                <div className="grid grid-cols-1 lg:grid-cols-1 gap-8">
 
-                    <div className="bg-white p-6 rounded-lg shadow-lg">
+                    <ActiveOrders orders={orders} />
+
+
+                    {/* <div className="bg-white p-6 rounded-lg shadow-lg">
                         <h2 className="text-2xl font-bold text-gray-800 mb-4">Menú del Día</h2>
                         <ul className="space-y-4">
                             {['Ensalada César', 'Pasta Alfredo', 'Filete de Salmón'].map((item, index) => (
@@ -158,51 +170,26 @@ function Dashboard() {
                                 </li>
                             ))}
                         </ul>
-                    </div>
+                    </div> */}
                 </div>
 
-                <div className="mt-10 bg-white p-6 rounded-lg shadow-lg">
-                    <h2 className="text-2xl font-bold text-gray-800 mb-4">Reservaciones de Hoy</h2>
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Nombre
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Hora
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Personas
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Estado
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                                {[
-                                    { name: 'Juan Pérez', time: '19:00', people: 4, status: 'Confirmada' },
-                                    { name: 'María García', time: '20:30', people: 2, status: 'Pendiente' },
-                                ].map((reservation, index) => (
-                                    <tr key={index}>
-                                        <td className="px-6 py-4 whitespace-nowrap">{reservation.name}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">{reservation.time}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">{reservation.people}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${reservation.status === 'Confirmada' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                                                }`}>
-                                                {reservation.status}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                <div className="mt-10">
+                    <ReservationList
+                        reservations={[
+                            { name: 'Juan Pérez', time: '19:00', people: 4, status: 'Confirmada' },
+                            { name: 'María García', time: '20:30', people: 2, status: 'Pendiente' },
+                        ]}
+                    />
                 </div>
             </main>
+
+            {isModalOpen && (
+                <NewBranchDialog
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    onSubmit={handleSubmit}
+                />
+            )}
         </div>
     );
 }

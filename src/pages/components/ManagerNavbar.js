@@ -16,6 +16,7 @@ export default function ManagerNavbar({ restaurantId }) {
 
     const navigation = [
         { name: 'Dashboard', href: '/manager/dashboard' },
+        { name: 'Sucursales', href: '/manager/branches' },
         { name: 'Empleados', href: '/manager/employees' },
         { name: 'Productos', href: `/manager/products/category` },
         { name: 'Mesas', href: '/manager/tables' },

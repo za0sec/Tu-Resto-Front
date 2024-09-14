@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
 import EmployeeNavbar from '../components/EmployeeNavbar';
 import apiClient from "@/pages/utils/apiClient";
-// import OrderModal from '../components/createOrderDialog';
 import OrderModal from '@/pages/components/CreateOrderDialog';
 import { useRouter } from 'next/router';
 import { FaTrash, FaEdit, FaPlus, FaTimes } from 'react-icons/fa';
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
+import Cookies from 'js-cookie';
 
 export default function BranchDashboard() {
+    const [branchId, setBranchId] = useState(null);
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -23,8 +24,10 @@ export default function BranchDashboard() {
 
     useEffect(() => {
         const fetchOrders = async () => {
+            const branchId = Cookies.get('user_branch_id');
+            setBranchId(branchId);
             try {
-                const ordersData = await apiClient.get(`/orders`);
+                const ordersData = await apiClient.get(`/branch/${branchId}/orders`);
                 setOrders(ordersData.data);
             } catch (error) {
                 console.error('Error al obtener órdenes:', error);
@@ -55,12 +58,12 @@ export default function BranchDashboard() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await apiClient.post(`/order/${formData.orderType}/create`, { order_items: [] });
+            const response = await apiClient.post(`branch/${branchId}/order/${formData.orderType}/create`, { order_items: [] });
             setFormData({ orderType: '', responsible: '', consumer: '' });
             closeModal();
             if (response.status === 201 && response.data.id) {
                 console.log('Orden creada exitosamente:', response.data);
-                router.push(`/branchemployee/editorder?id=${response.data.id}`);
+                router.push(`/branchstaff/editorder?id=${response.data.id}`);
             }
         } catch (error) {
             console.error('Error al crear la orden:', error);
@@ -74,7 +77,7 @@ export default function BranchDashboard() {
                 console.error('No hay orden seleccionada para actualizar');
                 return;
             }
-            router.push(`/branchemployee/editorder?id=${orderId}`);
+            router.push(`/branchstaff/editorder?id=${orderId}`);
         } catch (error) {
             console.error('Error al actualizar la orden:', error.response?.data || error.message);
         }
@@ -132,9 +135,9 @@ export default function BranchDashboard() {
                     <h1 className="text-4xl font-bold text-gray-800">Órdenes</h1>
                     <button
                         onClick={openModal}
-                        className="bg-primary text-white px-6 py-3 rounded-full hover:bg-primaryDark transition duration-300 flex items-center"
+                        className="bg-primary text-white px-6 py-3 rounded-full hover:bg-primaryDark transition duration-300 flex items-center group"
                     >
-                        <FaPlus className="mr-2" /> Crear Orden
+                        <FaPlus className="mr-2 transition-transform duration-300 group-hover:rotate-90" /> Crear Orden
                     </button>
                 </div>
                 <div className="flex flex-col md:flex-row gap-8">

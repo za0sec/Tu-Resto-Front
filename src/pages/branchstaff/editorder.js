@@ -11,13 +11,13 @@ import { jwtDecode } from 'jwt-decode';
 
 export default function EditOrder() {
     const router = useRouter();
-    const { id: orderId } = router.query; // Captura el ID de la URL
+    const { id: orderId } = router.query;
 
     const [categories, setCategories] = useState([]);
     const [products, setProducts] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selectedProduct, setSelectedProduct] = useState(null);
-    const [selectedItem, setSelectedItem] = useState(null); // Nuevo estado para manejar item seleccionado
+    const [selectedItem, setSelectedItem] = useState(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [quantity, setQuantity] = useState(1);
     const [additionalComments, setAdditionalComments] = useState('');
@@ -26,7 +26,6 @@ export default function EditOrder() {
     const [editingIndex, setEditingIndex] = useState(null);
     const [restaurantId, setRestaurantId] = useState(null);
     const [error, setError] = useState(null);
-
 
     useEffect(() => {
         const token = Cookies.get('accessToken');
@@ -46,7 +45,7 @@ export default function EditOrder() {
     useEffect(() => {
         const fetchOrderData = async () => {
             try {
-                const response = await apiClient.get(`/order/takeaway/${orderId}`);
+                const response = await apiClient.get(`order/takeaway/${orderId}`);
                 if (response.status === 200) {
                     setOrder(response.data.order_items);
                 } else {
@@ -101,7 +100,6 @@ export default function EditOrder() {
     };
 
     const handleProductClick = (product) => {
-        // Limpia el estado de item y abre el diálogo con un nuevo producto
         setSelectedProduct(product);
         setSelectedItem(null);  // Limpia cualquier item seleccionado
         setQuantity(1);
@@ -164,7 +162,7 @@ export default function EditOrder() {
             const response = await apiClient.patch(`/order/takeaway/${orderId}`, JSON.stringify(data));
 
             if (response.status === 200 || response.status === 204) {
-                router.push('/branchemployee/dashboard');
+                router.push('/branchstaff/dashboard');
             }
         } catch (error) {
             console.error('Error al actualizar la orden:', error);

@@ -4,10 +4,10 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
 const navigation = [
-    { name: 'Funcionalidades', href: '/branchemployee/dashboard' },
+    { name: 'Funcionalidades', href: '/branchstaff/dashboard' },
     { name: 'Dispositivos', href: '#' },
-    { name: 'Suscripciones', href: '/subscription' },
-    { name: 'Contacto', href: '#' },
+    { name: 'Suscripciones', href: '/components/subscription' },
+    { name: 'Contacto', href: '/components/contact' },
 ];
 
 export default function Navbar({ openModal }) {
@@ -22,10 +22,14 @@ export default function Navbar({ openModal }) {
                 <div className="relative pt-6 px-4 sm:px-6 lg:px-8 shadow-lg py-4">
                     <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between sm:h-10 lg:justify-start bg-white shadow-md px-10 py-10" aria-label="Global">
                         <div className="flex items-center justify-start space-x-4 lg:flex-grow">
-                            <div className="bg-blue-500 p-2 rounded-full">
-                                <img className="h-8 w-8" src="/svg/fork.svg" alt="Icono" />
-                            </div>
-                            <span className="font-bold text-gray-900">Tu Resto</span>
+                            <Link href="/">
+                                <div className="flex items-center space-x-2 cursor-pointer">
+                                    <div className="bg-blue-500 p-2 rounded-full">
+                                        <img className="h-8 w-8" src="/svg/fork.svg" alt="Icono" />
+                                    </div>
+                                    <span className="font-bold text-gray-900">Tu Resto</span>
+                                </div>
+                            </Link>
                         </div>
 
                         <div className="hidden md:flex md:space-x-8 ml-auto">

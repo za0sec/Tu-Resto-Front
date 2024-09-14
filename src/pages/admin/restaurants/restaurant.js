@@ -233,7 +233,7 @@ function Restaurant() {
                                     Sucursales
                                 </h2>
                                 <p className="text-gray-700">
-                                    {restaurant.branches ? restaurant.branches.length : 0} sucursales
+                                    {restaurant.branches ? restaurant.branches : 0} sucursales
                                 </p>
                             </div>
                         </a>
@@ -245,7 +245,7 @@ function Restaurant() {
                                     Empleados
                                 </h2>
                                 <p className="text-gray-700">
-                                    {restaurant.employees ? restaurant.employees.length : 0} empleados
+                                    {restaurant.employees ? restaurant.employees : 0} empleados
                                 </p>
                             </div>
                         </a>

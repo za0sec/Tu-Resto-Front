@@ -3,6 +3,8 @@ import AdminNavbar from '../components/AdminNavbar';
 import apiClient from "../utils/apiClient";
 import { FaMapMarkerAlt, FaUsers, FaUtensils } from 'react-icons/fa';
 import withAuth from '@/pages/components/withAuth';
+import BranchCard from '@/pages/components/BranchCard';
+
 
 function Restaurants() {
     const [restaurants, setRestaurants] = useState([]);
@@ -30,6 +32,7 @@ function Restaurants() {
             setLoading(false);
         }
     };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -92,6 +95,16 @@ function Restaurants() {
         setNewRestaurant({ ...newRestaurant, [name]: value });
     };
 
+    const handleCardClick = (restaurant) => {
+        window.location.href = `/admin/restaurants/restaurant?id=${restaurant.id}`;
+    };
+    const handleDeleteClick = async (restaurant) => {
+        if (window.confirm(`¿Estás seguro de que quieres eliminar el restaurante ${restaurant.name}?`)) {
+            await apiClient.delete(`/restaurant/${restaurant.id}`);
+            fetchRestaurants();
+        }
+    };
+
     if (loading) {
         return (
             <div className="min-h-screen bg-gray-100 flex justify-center items-center">
@@ -123,33 +136,13 @@ function Restaurants() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {restaurants.map((restaurant) => (
-                        <a href={`/admin/restaurants/restaurant?id=${restaurant.id}`} key={restaurant.id} className="block">
-                            <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 cursor-pointer">
-                                <img
-                                    src={restaurant.banner || "https://via.placeholder.com/400x200"}
-                                    alt={restaurant.name}
-                                    className="w-full h-48 object-cover"
-                                />
-                                <div className="p-6">
-                                    <h2 className="text-2xl font-bold text-primary mb-2">{restaurant.name}</h2>
-                                    <p className="text-gray-600 mb-4">{restaurant.description}</p>
-                                    <div className="flex flex-wrap gap-2 mt-4">
-                                        <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm flex items-center">
-                                            <FaMapMarkerAlt className="mr-2" />
-                                            {restaurant.location}
-                                        </span>
-                                        <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm flex items-center">
-                                            <FaUsers className="mr-2" />
-                                            {restaurant?.employees?.length} empleados
-                                        </span>
-                                        <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm flex items-center">
-                                            <FaUtensils className="mr-2" />
-                                            {restaurant.cuisine}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
+                        <BranchCard
+                            key={restaurant.id}
+                            data={restaurant}
+                            isBranch={false}
+                            onCardClick={handleCardClick}
+                            onDeleteClick={handleDeleteClick}
+                        />
                     ))}
                 </div>
             </main>

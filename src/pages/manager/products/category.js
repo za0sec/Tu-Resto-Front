@@ -8,6 +8,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { jwtDecode } from 'jwt-decode';
 import Cookies from 'js-cookie';
 import withAuth from '@/pages/components/withAuth';
+import NewCategoryDialog from './newCategoryDialog';
+import NewProductDialog from './newProductDialog';
+import DeleteModal from '@/pages/components/Delete';
+import ProductPreview from './ProductPreview';
 
 function CategoryProducts() {
     const [categories, setCategories] = useState([]);
@@ -86,20 +90,19 @@ function CategoryProducts() {
         }
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async (formData) => {
         try {
-            const formData = new FormData();
-            formData.append('name', newProduct.name);
-            formData.append('description', newProduct.description);
-            formData.append('price', parseFloat(newProduct.price).toFixed(2));
-            formData.append('discount', parseInt(newProduct.discount));
-            formData.append('category', selectedCategory.id);
-            if (newProduct.photo) {
-                formData.append('photo', newProduct.photo);
+            const newFormData = new FormData();
+            newFormData.append('name', formData.name);
+            newFormData.append('description', formData.description);
+            newFormData.append('price', parseFloat(formData.price).toFixed(2));
+            newFormData.append('discount', parseInt(formData.discount));
+            newFormData.append('category', selectedCategory.id);
+            if (formData.photo) {
+                newFormData.append('photo', formData.photo);
             }
 
-            const response = await apiClient.post('/product/create', formData, {
+            const response = await apiClient.post('/product/create', newFormData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -117,17 +120,16 @@ function CategoryProducts() {
         }
     };
 
-    const handleCategorySubmit = async (e) => {
-        e.preventDefault();
+    const handleCategorySubmit = async (formData) => {
         try {
-            const formData = new FormData();
-            formData.append('name', newCategory.name);
-            formData.append('description', newCategory.description);
-            formData.append('icon', newCategory.icon);
+            const formDataToSend = new FormData();
+            formDataToSend.append('name', formData.name);
+            formDataToSend.append('description', formData.description);
+            formDataToSend.append('icon', formData.icon);
 
-            if (newCategory.photo) {
-                const byteString = atob(newCategory.photo.split(',')[1]);
-                const mimeString = newCategory.photo.split(',')[0].split(':')[1].split(';')[0];
+            if (formData.photo) {
+                const byteString = atob(formData.photo.split(',')[1]);
+                const mimeString = formData.photo.split(',')[0].split(':')[1].split(';')[0];
                 const ab = new ArrayBuffer(byteString.length);
                 const ia = new Uint8Array(ab);
                 for (let i = 0; i < byteString.length; i++) {
@@ -136,10 +138,10 @@ function CategoryProducts() {
                 const blob = new Blob([ab], { type: mimeString });
                 const file = new File([blob], "photo.jpg", { type: mimeString });
 
-                formData.append('photo', file);
+                formDataToSend.append('photo', file);
             }
 
-            const response = await apiClient.post(`/restaurant/${restaurantId}/category/create`, formData, {
+            const response = await apiClient.post(`/restaurant/${restaurantId}/category/create`, formDataToSend, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -232,9 +234,9 @@ function CategoryProducts() {
                             <h2 className="text-xl font-semibold">Categorías</h2>
                             <button
                                 onClick={() => setIsCategoryModalOpen(true)}
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm transition-all duration-300 transform hover:rotate-90 hover:scale-110"
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-1 rounded-full text-sm transition-all duration-300 transform hover:rotate-90 hover:scale-110"
                             >
-                                <FaPlus className="transition-colors duration-300 hover:text-yellow-300" />
+                                <FaPlus className="transition-colors duration-300 hover:rotate-90" />
                             </button>
                         </div>
                         <ul>
@@ -257,9 +259,9 @@ function CategoryProducts() {
                         <h1 className="text-3xl font-bold text-gray-900">Productos de {selectedCategory?.name}</h1>
                         <button
                             onClick={() => setIsModalOpen(true)}
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center"
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center group"
                         >
-                            <FaPlus className="mr-2" /> Agregar Producto
+                            <FaPlus className="mr-2 transition-transform duration-300 group-hover:rotate-90" /> Agregar Producto
                         </button>
                     </div>
 
@@ -276,85 +278,12 @@ function CategoryProducts() {
                             </thead>
                             <tbody className="text-gray-600 text-sm font-light">
                                 {selectedCategory?.products.map((product) => (
-                                    <React.Fragment key={product.id}>
-                                        <tr
-                                            className="border-b border-gray-200 hover:bg-gray-100 cursor-pointer"
-                                            onClick={() => toggleProductEdit(product.id)}
-                                        >
-                                            <td className="py-3 px-6 text-left whitespace-nowrap">
-                                                <span>{product.name}</span>
-                                            </td>
-                                            <td className="py-3 px-6 text-left">
-                                                <span>{product.description}</span>
-                                            </td>
-                                            <td className="py-3 px-6 text-left">
-                                                <span>${product.price}</span>
-                                            </td>
-                                            <td className="py-3 px-6 text-left">
-                                                <span>{product.discount}%</span>
-                                            </td>
-                                            <td className="py-3 px-6 text-center">
-                                                <div className="flex item-center justify-center">
-                                                    <button
-                                                        className="w-4 mr-2 transform hover:text-red-500 hover:scale-110"
-                                                        onClick={(e) => handleDeleteClick(e, product)}
-                                                    >
-                                                        <FaTrash />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <AnimatePresence>
-                                            {editingProductId === product.id && (
-                                                <motion.tr
-                                                    className="bg-gray-50"
-                                                    initial={{ opacity: 0, height: 0 }}
-                                                    animate={{ opacity: 1, height: 'auto' }}
-                                                    exit={{ opacity: 0, height: 0 }}
-                                                    transition={{ duration: 0.3 }}
-                                                >
-                                                    <td colSpan="5" className="py-3 px-6">
-                                                        <form onSubmit={(e) => handleProductUpdate(e, product.id)}>
-                                                            <div className="grid grid-cols-2 gap-4">
-                                                                <input
-                                                                    type="text"
-                                                                    name="name"
-                                                                    defaultValue={product.name}
-                                                                    className="col-span-1 w-full px-3 py-2 border border-gray-300 rounded-md"
-                                                                />
-                                                                <input
-                                                                    type="text"
-                                                                    name="description"
-                                                                    defaultValue={product.description}
-                                                                    className="col-span-1 w-full px-3 py-2 border border-gray-300 rounded-md"
-                                                                />
-                                                                <input
-                                                                    type="number"
-                                                                    name="price"
-                                                                    defaultValue={product.price}
-                                                                    className="col-span-1 w-full px-3 py-2 border border-gray-300 rounded-md"
-                                                                />
-                                                                <input
-                                                                    type="number"
-                                                                    name="discount"
-                                                                    defaultValue={product.discount}
-                                                                    className="col-span-1 w-full px-3 py-2 border border-gray-300 rounded-md"
-                                                                />
-                                                            </div>
-                                                            <div className="mt-4 flex justify-end">
-                                                                <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md mr-2">
-                                                                    Guardar
-                                                                </button>
-                                                                <button type="button" onClick={() => setEditingProductId(null)} className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md">
-                                                                    Cancelar
-                                                                </button>
-                                                            </div>
-                                                        </form>
-                                                    </td>
-                                                </motion.tr>
-                                            )}
-                                        </AnimatePresence>
-                                    </React.Fragment>
+                                    <ProductPreview
+                                        key={product.id}
+                                        product={product}
+                                        onEdit={handleProductUpdate}
+                                        onDelete={handleDeleteClick}
+                                    />
                                 ))}
                             </tbody>
                         </table>
@@ -363,174 +292,26 @@ function CategoryProducts() {
             </div>
 
             {isModalOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                    <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
-                        <div className="flex justify-between items-center p-6 border-b">
-                            <h2 className="text-2xl font-bold text-gray-900">Agregar Nuevo Producto</h2>
-                            <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-500">
-                                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
-                        <form onSubmit={handleSubmit} className="p-6">
-                            <div className="mb-4">
-                                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Nombre del Producto</label>
-                                <input
-                                    type="text"
-                                    id="name"
-                                    name="name"
-                                    value={newProduct.name}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-                                    required
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
-                                <textarea
-                                    id="description"
-                                    name="description"
-                                    value={newProduct.description}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-                                    required
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-2">Precio</label>
-                                <input
-                                    type="number"
-                                    id="price"
-                                    name="price"
-                                    value={newProduct.price}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-                                    required
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label htmlFor="discount" className="block text-sm font-medium text-gray-700 mb-2">Descuento (%)</label>
-                                <input
-                                    type="number"
-                                    id="discount"
-                                    name="discount"
-                                    value={newProduct.discount}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-                                    min="0"
-                                    max="100"
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label htmlFor="photo" className="block text-sm font-medium text-gray-700 mb-2">Foto del Producto</label>
-                                <input
-                                    type="file"
-                                    id="photo"
-                                    name="photo"
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-                                    accept="image/*"
-                                />
-                            </div>
-                            <div className="flex justify-end">
-                                <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                    Agregar Producto
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+                <NewProductDialog
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    onSubmit={handleSubmit}
+                />
             )}
 
-            {isDeleteModalOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                    <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
-                        <h2 className="text-2xl font-bold text-gray-900 mb-4">Confirmar eliminación</h2>
-                        <p className="mb-4">¿Estás seguro de que quieres eliminar este producto?</p>
-                        <div className="flex justify-end">
-                            <button
-                                onClick={handleDeleteConfirm}
-                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-2"
-                            >
-                                Eliminar
-                            </button>
-                            <button
-                                onClick={() => setIsDeleteModalOpen(false)}
-                                className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
-                            >
-                                Cancelar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <DeleteModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={handleDeleteConfirm}
+                itemName="este producto"
+            />
 
             {isCategoryModalOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                    <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
-                        <div className="flex justify-between items-center p-6 border-b">
-                            <h2 className="text-2xl font-bold text-gray-900">Agregar Nueva Categoría</h2>
-                            <button onClick={() => setIsCategoryModalOpen(false)} className="text-gray-400 hover:text-gray-500">
-                                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
-                        <form onSubmit={handleCategorySubmit} className="p-6">
-                            <div className="mb-4">
-                                <label htmlFor="categoryName" className="block text-sm font-medium text-gray-700 mb-2">Nombre de la Categoría</label>
-                                <input
-                                    type="text"
-                                    id="categoryName"
-                                    name="name"
-                                    value={newCategory.name}
-                                    onChange={handleCategoryInputChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-                                    required
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label htmlFor="categoryDescription" className="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
-                                <textarea
-                                    id="categoryDescription"
-                                    name="description"
-                                    value={newCategory.description}
-                                    onChange={handleCategoryInputChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-                                    required
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label htmlFor="categoryIcon" className="block text-sm font-medium text-gray-700 mb-2">Icono</label>
-                                <input
-                                    type="text"
-                                    id="categoryIcon"
-                                    name="icon"
-                                    value={newCategory.icon}
-                                    onChange={handleCategoryInputChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label htmlFor="categoryPhoto" className="block text-sm font-medium text-gray-700 mb-2">Foto de la Categoría</label>
-                                <input
-                                    type="file"
-                                    id="categoryPhoto"
-                                    name="photo"
-                                    onChange={handleCategoryInputChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-                                    accept="image/*"
-                                />
-                            </div>
-                            <div className="flex justify-end">
-                                <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                    Agregar Categoría
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+                <NewCategoryDialog
+                    isOpen={isCategoryModalOpen}
+                    onClose={() => setIsCategoryModalOpen(false)}
+                    onSubmit={handleCategorySubmit}
+                />
             )}
         </div>
     );

@@ -9,8 +9,6 @@ import { useRouter } from 'next/router';
 const navigation = [
     { name: 'Dashboard', href: '/admin/dashboard' },
     { name: 'Restaurantes', href: '/admin/restaurants' },
-    { name: 'Empresas', href: '/admin/company' },
-    { name: 'Help', href: '/help' },
 ];
 
 export default function AdminNavbar() {

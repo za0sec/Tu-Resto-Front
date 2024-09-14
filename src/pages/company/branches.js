@@ -25,7 +25,6 @@ export default function BranchesPage() {
     const [company, setCompany] = useState(null);
 
 
-
     useEffect(() => {
         const fetchUser = async () => {
             try {
