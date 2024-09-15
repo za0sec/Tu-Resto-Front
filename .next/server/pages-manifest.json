@@ -2,8 +2,7 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/admin/dashboard": "pages/admin/dashboard.js",
-  "/manager/employees": "pages/manager/employees.js",
-  "/manager/dashboard": "pages/manager/dashboard.js",
-  "/manager/products/category": "pages/manager/products/category.js"
+  "/": "pages/index.js",
+  "/branchstaff/dashboard": "pages/branchstaff/dashboard.js",
+  "/components/contact": "pages/components/contact.js"
 }

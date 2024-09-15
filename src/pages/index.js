@@ -7,6 +7,8 @@ import Subscription from './components/subscription';
 import Cookies from 'js-cookie';
 import { useEffect } from 'react';
 import config from "@/pages/utils/config";
+import React from 'react';
+import { FaMobileAlt, FaTabletAlt, FaDesktop } from 'react-icons/fa';
 
 export default function Home({ token = true }) {
     const router = useRouter();
@@ -109,25 +111,25 @@ export default function Home({ token = true }) {
                     </section>
 
                     {/* Sección de Dispositivos */}
-                    <section id="dispositivos" className="py-20 px-8 bg-gradient-to-r from-blue-100 to-purple-100">
+                    <section id="dispositivos" className="py-20 px-8">
                         <h2 className="text-5xl font-bold text-center mb-16 text-gray-800 animate-fade-in-down">
                             Dispositivos Compatibles
                         </h2>
                         <div className="flex flex-wrap justify-center gap-16">
                             {[
-                                { name: 'Móvil', icon: 'fas fa-mobile-alt', description: 'Accede a tu restaurante desde cualquier lugar con nuestra app móvil.' },
-                                { name: 'Tablet', icon: 'fas fa-tablet-alt', description: 'Perfecta para tomar pedidos en mesa o gestionar el inventario.' },
-                                { name: 'Escritorio', icon: 'fas fa-desktop', description: 'Gestiona tu negocio con todas las funcionalidades en tu ordenador.' }
+                                { name: 'Móvil', icon: FaMobileAlt, description: 'Accede a tu restaurante desde cualquier lugar con nuestra app móvil.' },
+                                { name: 'Tablet', icon: FaTabletAlt, description: 'Perfecta para tomar pedidos en mesa o gestionar el inventario.' },
+                                { name: 'Escritorio', icon: FaDesktop, description: 'Gestiona tu negocio con todas las funcionalidades en tu ordenador.' }
                             ].map((device, index) => (
                                 <div key={index} className="relative group">
-                                    <div className="text-center transform group-hover:scale-110 transition-all duration-300 ease-in-out cursor-pointer">
+                                    <div className="text-center transition-all duration-300 ease-in-out cursor-pointer">
                                         <div className="w-40 h-40 mx-auto mb-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl shadow-xl flex items-center justify-center animate-float group-hover:shadow-2xl">
-                                            <i className={`${device.icon} text-5xl text-white`}></i>
+                                            <device.icon className="text-5xl text-white" />
                                         </div>
                                         <p className="text-2xl font-semibold text-gray-800">{device.name}</p>
                                     </div>
-                                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 bg-white p-6 rounded-lg shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out z-10 w-64">
-                                        <p className="text-gray-700">{device.description}</p>
+                                    <div className="absolute inset-0 bg-white rounded-3xl shadow-2xl opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out z-10 flex items-center justify-center">
+                                        <p className="text-gray-700 text-center px-4">{device.description}</p>
                                     </div>
                                 </div>
                             ))}
