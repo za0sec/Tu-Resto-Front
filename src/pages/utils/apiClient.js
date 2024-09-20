@@ -20,7 +20,7 @@ apiClient.interceptors.request.use(async (config) => {
         config.headers['Authorization'] = `Bearer ${accessToken}`;
     }
 
-    console.log("access token", accessToken);
+    // console.log("access token", accessToken);
 
     return config;
 }, (error) => {
@@ -49,7 +49,7 @@ apiClient.interceptors.response.use(
 async function refreshAccessToken() {
     try {
         const refreshToken = Cookies.get('refreshToken');
-        console.log("Refresh", refreshToken);
+        // console.log("Refresh", refreshToken);
         if (!refreshToken) {
             console.log('No refresh token available.');
             return null;
@@ -68,6 +68,8 @@ async function refreshAccessToken() {
         return accessToken;
     } catch (error) {
         console.error('Error refreshing access token:', error);
+        Cookies.remove('accessToken');
+        Cookies.remove('refreshToken');
         return null;
     }
 }

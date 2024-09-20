@@ -3,10 +3,11 @@ import EmployeeNavbar from '../components/EmployeeNavbar';
 import apiClient from "@/pages/utils/apiClient";
 import OrderModal from '@/pages/components/CreateOrderDialog';
 import { useRouter } from 'next/router';
-import { FaTrash, FaEdit, FaPlus, FaTimes } from 'react-icons/fa';
+import { FaPlus, FaTimes } from 'react-icons/fa';
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import Cookies from 'js-cookie';
+import OrderItemsList from '../components/OrderItemsList';
 
 export default function BranchDashboard() {
     const [branchId, setBranchId] = useState(null);
@@ -14,7 +15,7 @@ export default function BranchDashboard() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [formData, setFormData] = useState({ orderType: '', responsible: '', consumer: '' });
+    const [formData, setFormData] = useState({ orderType: '', branch_staff: '', consumer: '' });
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [orderToDelete, setOrderToDelete] = useState(null);
@@ -51,6 +52,7 @@ export default function BranchDashboard() {
     };
 
     const handleInputChange = (e) => {
+        console.log(formData.branch_staff);
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
@@ -58,8 +60,8 @@ export default function BranchDashboard() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await apiClient.post(`branch/${branchId}/order/${formData.orderType}/create`, { order_items: [] });
-            setFormData({ orderType: '', responsible: '', consumer: '' });
+            const response = await apiClient.post(`branch/${branchId}/order/${formData.orderType}/create`, { order_items: [], branch_staff: formData.branch_staff, consumer: formData.consumer });
+            setFormData({ orderType: '', branch_staff: '', consumer: '' });
             closeModal();
             if (response.status === 201 && response.data.id) {
                 console.log('Orden creada exitosamente:', response.data);
@@ -140,10 +142,10 @@ export default function BranchDashboard() {
                         <FaPlus className="mr-2 transition-transform duration-300 group-hover:rotate-90" /> Crear Orden
                     </button>
                 </div>
-                <div className="flex flex-col md:flex-row gap-8">
-                    <div className="w-full md:w-1/2 bg-white shadow-lg rounded-lg overflow-hidden">
+                <div className="flex flex-col md:flex-row gap-8 items-start">
+                    <div className="w-full md:w-1/2 bg-white shadow-lg rounded-lg overflow-hidden flex flex-col">
                         <h2 className="text-2xl font-semibold bg-yellow-100 text-black p-4">Ordenes recientes</h2>
-                        <ul className="divide-y divide-gray-200">
+                        <ul className="divide-y divide-gray-200 overflow-y-auto max-h-[500px] flex-grow">
                             {orders.map((order) => (
                                 <li
                                     key={order.id}
@@ -158,54 +160,15 @@ export default function BranchDashboard() {
                             ))}
                         </ul>
                     </div>
-                    <div className="w-full md:w-1/2 bg-white shadow-lg rounded-lg overflow-hidden">
-                        {selectedOrder ? (
-                            <div className="p-6">
-                                <div className="flex justify-between items-center mb-6">
-                                    <h2 className="text-2xl font-semibold text-gray-800">Detalles del Pedido #{selectedOrder.id}</h2>
-                                    <button
-                                        onClick={() => handleUpdateOrder(selectedOrder.id)}
-                                        className="bg-secondary text-white px-4 py-2 rounded-full transition hover:bg-secondaryDark duration-300 flex items-center"
-                                    >
-                                        <FaEdit className="mr-2" /> Editar Orden
-                                    </button>
-                                </div>
-                                <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                                    <h3 className="text-xl font-medium mb-4 text-gray-700">Ítems del pedido:</h3>
-                                    <ul className="space-y-4">
-                                        {selectedOrder.items.map((item, index) => (
-                                            <li key={index} className="bg-blue-100 shadow rounded-lg p-4 hover:shadow-md transition-shadow duration-300">
-                                                <h4 className="text-lg font-semibold text-blue-900 mb-2">{item.product.name}</h4>
-                                                <div className="flex justify-between items-center text-sm">
-                                                    <span className="font-medium text-black">Precio: ${item.product.price}</span>
-                                                    <span className="bg-gray-200 px-3 py-1 rounded-full text-black">Cantidad: {item.quantity}</span>
-                                                </div>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                                <div className="flex justify-end space-x-4">
-                                    <button
-                                        onClick={() => openDeleteDialog(selectedOrder.id)}
-                                        className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition duration-300 flex items-center justify-center"
-                                    >
-                                        <FaTrash />
-                                    </button>
-                                    <button
-                                        className="bg-secondary text-white font-medium px-4 py-2 rounded-full hover:bg-secondaryDark"
-                                    >
-                                        Cerrar Orden
-                                    </button>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="p-6 text-center text-gray-500">
-                                <FaTimes className="mx-auto text-4xl mb-4" />
-                                <p className="text-xl">Seleccione un pedido para ver los detalles</p>
-                            </div>
-                        )}
+                    <div className="w-full md:w-1/2 bg-white shadow-lg rounded-lg overflow-hidden flex flex-col">
+                        <OrderItemsList
+                            selectedOrder={selectedOrder}
+                            handleUpdateOrder={handleUpdateOrder}
+                            openDeleteDialog={openDeleteDialog}
+                        />
                     </div>
                 </div>
+
             </div>
             <OrderModal
                 isModalOpen={isModalOpen}
@@ -213,6 +176,7 @@ export default function BranchDashboard() {
                 handleInputChange={handleInputChange}
                 handleSubmit={handleSubmit}
                 closeModal={closeModal}
+                branchId={branchId}
             />
             <Transition appear show={isDeleteDialogOpen} as={Fragment}>
                 <Dialog as="div" className="relative z-10" onClose={closeDeleteDialog}>

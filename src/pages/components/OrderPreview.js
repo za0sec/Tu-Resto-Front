@@ -23,6 +23,7 @@ export default function OrderCreationPreview({ order, handleEditItem, handleDele
                                     </p>
                                 )}
                                 {item.comments && <p className="text-sm text-gray-600">Comentarios: {item.comments}</p>}
+                                <p className="text-sm text-gray-600">Orden realizada por </p>
                             </div>
                             <div className="flex items-center">
                                 <p className="font-semibold mr-2">${(item.price * item.quantity).toFixed(2)}</p>

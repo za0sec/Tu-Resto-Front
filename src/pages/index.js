@@ -40,11 +40,13 @@ export default function Home({ token = true }) {
                         router.replace(`/${userRole.toLowerCase()}/dashboard`);
                     } else {
                         Cookies.remove('accessToken');
+                        Cookies.remove('refreshToken');
                         Cookies.remove('user_role');
                     }
                 } catch (error) {
                     console.error('Error al verificar el token:', error);
                     Cookies.remove('accessToken');
+                    Cookies.remove('refreshToken');
                     Cookies.remove('user_role');
                 }
             }

@@ -1,6 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import apiClient from "@/pages/utils/apiClient";
 
-export default function OrderModal({ isModalOpen, formData, handleInputChange, handleSubmit, closeModal }) {
+export default function OrderModal({ isModalOpen, formData, handleInputChange, handleSubmit, closeModal, branchId }) {
+    const [employees, setEmployees] = useState([]);
+
+    useEffect(() => {
+        const fetchEmployees = async () => {
+            try {
+                const response = await apiClient.get(`/branch/${branchId}/staff`);
+                // console.log(response.data);
+                setEmployees(response.data);
+            } catch (error) {
+                console.error('Error fetching employees:', error);
+            }
+        };
+
+        if (branchId) {
+            fetchEmployees();
+        }
+    }, [branchId]);
+
     if (!isModalOpen) return null; // Si el modal no está abierto, no se renderiza nada.
 
     return (
@@ -8,7 +27,6 @@ export default function OrderModal({ isModalOpen, formData, handleInputChange, h
             <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md relative">
                 <h2 className="text-2xl font-bold mb-4">Crear Nueva Orden</h2>
                 <form onSubmit={handleSubmit}>
-                    {/* Tipo de Orden */}
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="orderType">
                             Tipo de Orden
@@ -30,20 +48,20 @@ export default function OrderModal({ isModalOpen, formData, handleInputChange, h
 
                     {/* Responsable Asignado */}
                     <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="responsible">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="branch_staff">
                             Responsable Asignado
                         </label>
                         <select
-                            id="responsible"
-                            name="responsible"
-                            value={formData.responsible}
+                            id="branch_staff"
+                            name="branch_staff"
+                            value={formData.branch_staff}
                             onChange={handleInputChange}
                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         >
                             <option value="">Seleccionar responsable</option>
-                            <option value="empleado1">Empleado 1</option>
-                            <option value="empleado2">Empleado 2</option>
-                            <option value="empleado3">Empleado 3</option>
+                            {employees.map(employee => (
+                                <option key={employee.id} value={employee.id}>{employee.user.first_name} {employee.user.last_name}</option>
+                            ))}
                         </select>
                     </div>
 
