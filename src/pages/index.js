@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import Navbar from './components/Navbar';
-import HeroSection from './components/HeroSection';
-import LoginModal from "./components/LoginModal";
+import Navbar from '../components/Navbar';
+import HeroSection from '../components/HeroSection';
+import LoginModal from "../components/LoginModal";
 import { useRouter } from "next/router";
-import Subscription from './components/subscription';
+import Subscription from '../components/subscription';
 import Cookies from 'js-cookie';
 import { useEffect } from 'react';
-import config from "@/pages/utils/config";
+import config from "/utils/config";
 import React from 'react';
 import { FaMobileAlt, FaTabletAlt, FaDesktop } from 'react-icons/fa';
 

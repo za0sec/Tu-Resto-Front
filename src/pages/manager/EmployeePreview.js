@@ -38,28 +38,28 @@ const EmployeePreview = ({ employee, branches, onUpdate, onDelete }) => {
                 <td className="py-3 px-6 text-left whitespace-nowrap">
                     <div className="flex items-center">
                         <FaUser className="mr-2" />
-                        <span>{employee.user.username}</span>
+                        <span>{employee?.user?.username}</span>
                     </div>
                 </td>
                 <td className="py-3 px-6 text-left">
-                    <span>{employee.user.email}</span>
+                    <span>{employee?.user?.email}</span>
                 </td>
                 <td className="py-3 px-6 text-left">
                     <div className="flex items-center">
                         <FaPhone className="mr-2" />
-                        <span>{employee.phone}</span>
+                        <span>{employee?.phone}</span>
                     </div>
                 </td>
                 <td className="py-3 px-6 text-left">
                     <div className="flex items-center">
                         <FaBuilding className="mr-2" />
-                        <span>{employee.branch.name}</span>
+                        <span>{employee?.branch?.name}</span>
                     </div>
                 </td>
                 <td className="py-3 px-6 text-left">
                     <div className="flex items-center">
                         <FaCalendar className="mr-2" />
-                        <span>{new Date(employee.branch.branch_employees[0].started_at).toLocaleDateString()}</span>
+                        <span>{new Date(employee?.branch?.branch_employees[0]?.started_at).toLocaleDateString()}</span>
                     </div>
                 </td>
                 <td className="py-3 px-6 text-center">
@@ -88,34 +88,34 @@ const EmployeePreview = ({ employee, branches, onUpdate, onDelete }) => {
                                     <input
                                         type="text"
                                         name="first_name"
-                                        defaultValue={employee.user.first_name}
+                                        defaultValue={employee?.user?.first_name}
                                         className="col-span-1 w-full px-3 py-2 border border-gray-300 rounded-md"
                                         required
                                     />
                                     <input
                                         type="text"
                                         name="last_name"
-                                        defaultValue={employee.user.last_name}
+                                        defaultValue={employee?.user?.last_name}
                                         className="col-span-1 w-full px-3 py-2 border border-gray-300 rounded-md"
                                         required
                                     />
                                     <input
                                         type="email"
                                         name="email"
-                                        defaultValue={employee.user.email}
+                                        defaultValue={employee?.user?.email}
                                         className="col-span-1 w-full px-3 py-2 border border-gray-300 rounded-md"
                                         required
                                     />
                                     <input
                                         type="text"
                                         name="phone"
-                                        defaultValue={employee.phone}
+                                        defaultValue={employee?.phone}
                                         className="col-span-1 w-full px-3 py-2 border border-gray-300 rounded-md"
                                         required
                                     />
                                     <select
                                         name="branch"
-                                        defaultValue={employee.branch.id}
+                                        defaultValue={employee?.branch?.id}
                                         className="col-span-2 w-full px-3 py-2 border border-gray-300 rounded-md"
                                         required
                                     >

@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-import EmployeeNavbar from '../components/EmployeeNavbar';
-import apiClient from "@/pages/utils/apiClient";
-import OrderModal from '@/pages/components/CreateOrderDialog';
+import EmployeeNavbar from '../../components/EmployeeNavbar';
+import apiClient from "/utils/apiClient";
+import OrderModal from '../../components/CreateOrderDialog';
 import { useRouter } from 'next/router';
 import { FaPlus, FaTimes } from 'react-icons/fa';
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import Cookies from 'js-cookie';
-import OrderItemsList from '../components/OrderItemsList';
+import OrderItemsList from '../../components/OrderItemsList';
 
 export default function BranchDashboard() {
     const [branchId, setBranchId] = useState(null);

@@ -9,7 +9,6 @@ const ProductPreview = ({ product, onEdit, onDelete }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Implement your update logic here
         onEdit(product.id, {
             name: e.target.name.value,
             description: e.target.description.value,
@@ -30,16 +29,16 @@ const ProductPreview = ({ product, onEdit, onDelete }) => {
                 exit={{ opacity: 0 }}
             >
                 <td className="py-3 px-6 text-left whitespace-nowrap">
-                    <span>{product.name}</span>
+                    <span>{product?.name}</span>
                 </td>
                 <td className="py-3 px-6 text-left">
-                    <span>{product.description}</span>
+                    <span>{product?.description}</span>
                 </td>
                 <td className="py-3 px-6 text-left">
-                    <span>${product.price}</span>
+                    <span>${product?.price}</span>
                 </td>
                 <td className="py-3 px-6 text-left">
-                    <span>{product.discount}%</span>
+                    <span>{product?.discount}%</span>
                 </td>
                 <td className="py-3 px-6 text-center">
                     <div className="flex item-center justify-center">
@@ -70,25 +69,25 @@ const ProductPreview = ({ product, onEdit, onDelete }) => {
                                     <input
                                         type="text"
                                         name="name"
-                                        defaultValue={product.name}
+                                        defaultValue={product?.name}
                                         className="col-span-1 w-full px-3 py-2 border border-gray-300 rounded-md"
                                     />
                                     <input
                                         type="text"
                                         name="description"
-                                        defaultValue={product.description}
+                                        defaultValue={product?.description}
                                         className="col-span-1 w-full px-3 py-2 border border-gray-300 rounded-md"
                                     />
                                     <input
                                         type="number"
                                         name="price"
-                                        defaultValue={product.price}
+                                        defaultValue={product?.price}
                                         className="col-span-1 w-full px-3 py-2 border border-gray-300 rounded-md"
                                     />
                                     <input
                                         type="number"
                                         name="discount"
-                                        defaultValue={product.discount}
+                                        defaultValue={product?.discount}
                                         className="col-span-1 w-full px-3 py-2 border border-gray-300 rounded-md"
                                     />
                                 </div>

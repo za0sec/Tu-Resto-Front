@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Product from './Product';
 import ProductExtra from './ProductExtra';
-// import apiClient from '@/pages/utils/apiClient';
+// import apiClient from '/utils/apiClient';
 
 const Order = ({ orderId, initialProducts = [] }) => {
     const [products, setProducts] = useState(initialProducts);

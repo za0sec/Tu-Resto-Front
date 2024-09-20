@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
 import React from 'react';
-import ManagerNavbar from '../components/ManagerNavbar';
-import apiClient from "../utils/apiClient";
-import { FaUser, FaPhone, FaCalendar, FaBuilding, FaTrash } from 'react-icons/fa';
-import { motion, AnimatePresence } from 'framer-motion';
-import withAuth from '@/pages/components/withAuth';
+import ManagerNavbar from '../../components/ManagerNavbar';
+import apiClient from '/utils/apiClient';
+import withAuth from '../../components/withAuth';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import NewEmployeeDialog from './newEmployeeDialog';

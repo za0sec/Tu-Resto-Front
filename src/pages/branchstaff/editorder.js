@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import EmployeeNavbar from '../components/EmployeeNavbar';
+import EmployeeNavbar from '../../components/EmployeeNavbar';
 import { useRouter } from 'next/router'; // Para obtener el ID de la URL
-import apiClient from '../utils/apiClient';
-import OrderItemDialog from '../components/OrderItemCreationDialog';
-import CategorySidebar from '../components/CategorySidebar';
-import OrderCreationPreview from '../components/OrderCreationPreview';
-import ProductList from '../components/OrderCreationProductList';
+import apiClient from '/utils/apiClient';
+import OrderItemDialog from '../../components/OrderItemCreationDialog';
+import CategorySidebar from '../../components/CategorySidebar';
+import OrderCreationPreview from '../../components/OrderCreationPreview';
+import ProductList from '../../components/OrderCreationProductList';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 

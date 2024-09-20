@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import SubscriptionItem from './SubscriptionItem';
-import config from "@/pages/utils/config";
+import config from "/utils/config";
 import Navbar from './Navbar';
 import LoginModal from './LoginModal';
 export default function Subscription() {

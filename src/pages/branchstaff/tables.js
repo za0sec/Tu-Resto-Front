@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import EmployeeNavbar from '../components/EmployeeNavbar';
+import EmployeeNavbar from '../../components/EmployeeNavbar';
 import axios from 'axios';
 
 const TableItem = ({ id, number, capacity, x, y, onMove, onEdit, onDelete }) => {

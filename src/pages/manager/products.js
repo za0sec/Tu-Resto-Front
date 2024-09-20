@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import ManagerNavbar from '../components/ManagerNavbar';
-import apiClient from "../utils/apiClient";
+import ManagerNavbar from '../../components/ManagerNavbar';
+import apiClient from '/utils/apiClient';
 import { FaTag, FaInfo, FaImage } from 'react-icons/fa';
 import * as FaIcons from 'react-icons/fa';
-import withAuth from '@/pages/components/withAuth';
+import withAuth from '../../components/withAuth';
 
 function Categories({ restaurantId }) {
     const [categories, setCategories] = useState([]);

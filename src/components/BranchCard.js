@@ -1,4 +1,4 @@
-import { FaMapMarkerAlt, FaPhone, FaTrash, FaUsers, FaUtensils } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaPhone, FaTrash, FaUsers } from 'react-icons/fa';
 
 function BranchCard({
     data,

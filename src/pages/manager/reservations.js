@@ -1,5 +1,5 @@
 import React from 'react';
-import Reservation from '../components/Reservation';
+import Reservation from '../../components/Reservation';
 
 const ReservationList = ({ reservations }) => {
     return (
@@ -24,13 +24,13 @@ const ReservationList = ({ reservations }) => {
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {reservations.map((reservation, index) => (
+                        {reservations?.map((reservation, index) => (
                             <Reservation
                                 key={index}
-                                name={reservation.name}
-                                time={reservation.time}
-                                people={reservation.people}
-                                status={reservation.status}
+                                name={reservation?.name}
+                                time={reservation?.time}
+                                people={reservation?.people}
+                                status={reservation?.status}
                             />
                         ))}
                     </tbody>

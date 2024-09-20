@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
-import apiClient from "@/pages/utils/apiClient";
-import withAuth from '@/pages/components/withAuth';
-import ManagerNavbar from '@/pages/components/ManagerNavbar';
+import apiClient from "/utils/apiClient";
+import withAuth from '../../components/withAuth';
+import ManagerNavbar from '../../components/ManagerNavbar';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
-import DeleteModal from '@/pages/components/Delete';
-import BranchCard from '@/pages/components/BranchCard';
+import DeleteModal from '../../components/Delete';
+import BranchCard from '../../components/BranchCard';
 
 
 function BranchesPage() {

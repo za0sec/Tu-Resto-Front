@@ -1,10 +1,10 @@
 import { useState, useEffect, Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { useRouter } from 'next/router';
-import apiClient from "@/pages/utils/apiClient";
-import AdminNavbar from '@/pages/components/AdminNavbar';
+import apiClient from '/utils/apiClient';
+import AdminNavbar from '../../components/AdminNavbar';
 import Autocomplete from 'react-google-autocomplete';
-import config from "@/pages/utils/config";
+import config from "/utils/config";
 
 
 

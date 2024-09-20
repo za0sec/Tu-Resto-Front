@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import AdminNavbar from '../../components/AdminNavbar';
-import apiClient from "../../utils/apiClient";
+import AdminNavbar from '../../../components/AdminNavbar';
+import apiClient from '/utils/apiClient';
 import { FaMapMarkerAlt, FaUsers, FaUtensils, FaUserTie, FaBuilding, FaCreditCard } from 'react-icons/fa';
-import withAuth from '@/pages/components/withAuth';
+import withAuth from '../../../components/withAuth';
 
 function Restaurant() {
     const [restaurant, setRestaurant] = useState(null);

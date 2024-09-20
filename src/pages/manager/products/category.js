@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 import React from 'react';
 import { useRouter } from 'next/router';
-import ManagerNavbar from '../../components/ManagerNavbar';
-import apiClient from "../../utils/apiClient";
+import ManagerNavbar from '../../../components/ManagerNavbar';
+import apiClient from "/utils/apiClient";
 import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { jwtDecode } from 'jwt-decode';
 import Cookies from 'js-cookie';
-import withAuth from '@/pages/components/withAuth';
+import withAuth from '../../../components/withAuth';
 import NewCategoryDialog from './newCategoryDialog';
 import NewProductDialog from './newProductDialog';
-import DeleteModal from '@/pages/components/Delete';
+import DeleteModal from '../../../components/Delete';
 import ProductPreview from './ProductPreview';
 
 function CategoryProducts() {

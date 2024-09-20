@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import AdminNavbar from '../components/AdminNavbar';
-import apiClient from "../utils/apiClient";
+import AdminNavbar from '../../components/AdminNavbar';
+import apiClient from '/utils/apiClient';
 import { FaMapMarkerAlt, FaUsers, FaUtensils } from 'react-icons/fa';
-import withAuth from '@/pages/components/withAuth';
-import BranchCard from '@/pages/components/BranchCard';
+import withAuth from '../../components/withAuth';
+import BranchCard from '../../components/BranchCard';
 
 
 function Restaurants() {

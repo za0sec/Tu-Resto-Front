@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import ManagerNavbar from '../../components/ManagerNavbar';
+import ManagerNavbar from '../../../components/ManagerNavbar';
 import cookie from 'cookie';
 import Cookies from "js-cookie";
-import config from "@/pages/utils/config";
-import apiClient from "@/pages/utils/apiClient";
+import config from "/utils/config";
+import apiClient from "/utils/apiClient";
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
 import { FaChevronDown } from "react-icons/fa";
-import withAuth from '@/pages/components/withAuth';
+import withAuth from '../../../components/withAuth';
 import { motion, AnimatePresence } from 'framer-motion';
 import { jwtDecode } from 'jwt-decode';
 import React from 'react';

@@ -1,5 +1,4 @@
 import React from 'react';
-import { FaPlus } from 'react-icons/fa';
 
 const CategorySidebar = ({ categories, selectedCategory, onCategoryClick }) => {
     return (

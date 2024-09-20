@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Cookies from "js-cookie";
-import AdminNavbar from "./components/AdminNavbar";
-import { authenticate, fetchWithToken } from "./utils/auth";
-import config from "@/pages/utils/config";
-import apiClient from "@/pages/utils/apiClient";
+import AdminNavbar from "../components/AdminNavbar";
+import apiClient from "/utils/apiClient";
 
 export default function ChangePassword() {
     const router = useRouter();

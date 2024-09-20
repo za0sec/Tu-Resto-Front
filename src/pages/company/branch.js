@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import apiClient from "@/pages/utils/apiClient";
-import AdminNavbar from '@/pages/components/AdminNavbar';
+import apiClient from '/utils/apiClient';
+import AdminNavbar from '../../components/AdminNavbar';
 import GoogleMapReact from 'google-map-react';
-import config from "@/pages/utils/config";
+import config from '/utils/config';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';

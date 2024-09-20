@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import apiClient from "@/pages/utils/apiClient";
+import apiClient from '/utils/apiClient';
 
 export default function OrderModal({ isModalOpen, formData, handleInputChange, handleSubmit, closeModal, branchId }) {
     const [employees, setEmployees] = useState([]);

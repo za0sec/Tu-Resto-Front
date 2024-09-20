@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import EmployeeNavbar from '../components/EmployeeNavbar';
-import Product from '../components/Product';
-import apiClient from "@/pages/utils/apiClient";
-import withAuth from '@/pages/components/withAuth';
+import EmployeeNavbar from '../../components/EmployeeNavbar';
+import Product from '../../components/Product';
+import apiClient from "/utils/apiClient";
+import withAuth from '../../components/withAuth';
 
 function Menu() {
     const [categories, setCategories] = useState([]);

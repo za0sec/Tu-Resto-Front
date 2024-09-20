@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import Navbar from './components/Navbar';
-import apiClient, { publicApiClient } from './utils/apiClient';
+import Navbar from '../components/Navbar';
 
 export default function ResetPassword() {
     const [password, setPassword] = useState('');
