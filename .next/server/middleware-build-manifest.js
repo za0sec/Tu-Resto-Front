@@ -19,11 +19,6 @@ self.__BUILD_MANIFEST = {
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/admin/restaurants/restaurant": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/admin/restaurants/restaurant.js"
-    ],
     "/manager/branches": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
@@ -33,11 +28,6 @@ self.__BUILD_MANIFEST = {
       "static/chunks/webpack.js",
       "static/chunks/main.js",
       "static/chunks/pages/manager/branches/branch.js"
-    ],
-    "/manager/employees": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/manager/employees.js"
     ],
     "/manager/tables": [
       "static/chunks/webpack.js",

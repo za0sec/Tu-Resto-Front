@@ -5,6 +5,7 @@ import ManagerNavbar from '@/components/ManagerNavbar';
 import apiClient from '/utils/apiClient';
 import Cookies from 'js-cookie';
 import Table from '@/components/Table';
+
 const Tables = () => {
     const [tables, setTables] = useState([]);
     const [newTableNumber, setNewTableNumber] = useState('');
@@ -45,11 +46,11 @@ const Tables = () => {
     const fetchTables = async (branchId) => {
         try {
             const response = await apiClient.get(`/branch/${branchId}/tables`);
-            const tablesWithParsedPositions = response.data.map(table => ({
+            const tablesWithPositions = response.data.map(table => ({
                 ...table,
-                position: JSON.parse(table.position)
+                position: { x: table.position_x, y: table.position_y }
             }));
-            setTables(tablesWithParsedPositions);
+            setTables(tablesWithPositions);
         } catch (error) {
             console.error('Error fetching tables:', error);
         }
@@ -60,7 +61,8 @@ const Tables = () => {
             number: parseInt(newTableNumber),
             capacity: parseInt(newTableCapacity),
             bookable: newTableBookable,
-            position: JSON.stringify({ x: 0, y: 0 }),
+            position_x: 0,
+            position_y: 0,
             branch: selectedBranch
         };
 
@@ -69,7 +71,7 @@ const Tables = () => {
             const createdTable = response.data;
             setTables([...tables, {
                 ...createdTable,
-                position: { x: 0, y: 0 }
+                position: { x: createdTable.position_x, y: createdTable.position_y }
             }]);
             setNewTableNumber('');
             setNewTableCapacity('');
@@ -93,7 +95,8 @@ const Tables = () => {
 
         try {
             await apiClient.patch(`/table/${id}`, {
-                position: JSON.stringify(newPosition)
+                position_x: newPosition.x,
+                position_y: newPosition.y
             });
         } catch (error) {
             console.error('Error updating table position:', error);
