@@ -1,45 +1,45 @@
-import { useState, useEffect } from 'react';
-import React from 'react';
-import ManagerNavbar from '../../components/ManagerNavbar';
-import apiClient from '/utils/apiClient';
-import withAuth from '../../components/withAuth';
-import Cookies from 'js-cookie';
-import { jwtDecode } from 'jwt-decode';
-import NewEmployeeDialog from './newEmployeeDialog';
-import EmployeePreview from './EmployeePreview';
+import { useState, useEffect } from "react";
+import React from "react";
+import ManagerNavbar from "../../components/ManagerNavbar";
+import apiClient from "/utils/apiClient";
+import withAuth from "../../components/withAuth";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
+import NewEmployeeDialog from "./newEmployeeDialog";
+import EmployeePreview from "./EmployeePreview";
 
 function Employees() {
     const [employees, setEmployees] = useState([]);
     const [branches, setBranches] = useState([]);
     const [restaurantId, setRestaurantId] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [editingEmployeeId, setEditingEmployeeId] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [newEmployee, setNewEmployee] = useState({
         user: {
-            first_name: '',
-            last_name: '',
-            username: '',
-            email: '',
+            first_name: "",
+            last_name: "",
+            username: "",
+            email: "",
         },
-        phone: '',
-        branch: ''
+        phone: "",
+        branch: "",
     });
 
-
     useEffect(() => {
-        const token = Cookies.get('accessToken');
+        const token = Cookies.get("accessToken");
         if (token) {
             try {
                 const decodedToken = jwtDecode(token);
                 setRestaurantId(decodedToken.restaurant_id);
             } catch (error) {
-                console.error('Error al decodificar el token:', error);
-                setError('Error al obtener la información del restaurante');
+                console.error("Error al decodificar el token:", error);
+                setError("Error al obtener la información del restaurante");
             }
         } else {
-            setError('No se encontró el token de acceso');
+            setError("No se encontró el token de acceso");
         }
     }, []);
 
@@ -56,11 +56,11 @@ function Employees() {
             if (response.status === 200) {
                 setBranches(response.data);
             } else {
-                setError('Error al obtener las sucursales');
+                setError("Error al obtener las sucursales");
             }
         } catch (error) {
-            console.error('Error al obtener sucursales:', error);
-            setError('Error al obtener las sucursales');
+            console.error("Error al obtener sucursales:", error);
+            setError("Error al obtener las sucursales");
         } finally {
             setLoading(false);
         }
@@ -68,15 +68,17 @@ function Employees() {
 
     const fetchEmployees = async () => {
         try {
-            const response = await apiClient.get(`/restaurant/${restaurantId}/staff`);
+            const response = await apiClient.get(
+                `/restaurant/${restaurantId}/staff`
+            );
             if (response.status === 200) {
                 setEmployees(response.data);
             } else {
-                setError('Error al obtener los empleados');
+                setError("Error al obtener los empleados");
             }
         } catch (error) {
-            console.error('Error al obtener empleados:', error);
-            setError('Error al obtener los empleados');
+            console.error("Error al obtener empleados:", error);
+            setError("Error al obtener los empleados");
         } finally {
             setLoading(false);
         }
@@ -84,44 +86,54 @@ function Employees() {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        if (['first_name', 'last_name', 'username', 'email'].includes(name)) {
-            setNewEmployee({
-                ...newEmployee,
+        if (["first_name", "last_name", "username", "email"].includes(name)) {
+            setNewEmployee((prevState) => ({
+                ...prevState,
                 user: {
-                    ...newEmployee.user,
-                    [name]: value
-                }
-            });
+                    ...prevState.user,
+                    [name]: value,
+                },
+            }));
         } else {
-            setNewEmployee({ ...newEmployee, [name]: value });
+            setNewEmployee((prevState) => ({
+                ...prevState,
+                [name]: value,
+            }));
         }
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async (employeeData) => {
+        setIsLoading(true);
         try {
-            const response = await apiClient.post('/branchStaff/create', newEmployee);
+            const response = await apiClient.post(
+                "/branchStaff/create",
+                employeeData
+            );
             if (response.status === 201) {
                 setIsModalOpen(false);
                 fetchEmployees();
                 setNewEmployee({
                     user: {
-                        first_name: '',
-                        last_name: '',
-                        username: '',
-                        email: '',
+                        first_name: "",
+                        last_name: "",
+                        username: "",
+                        email: "",
                     },
-                    phone: '',
-                    branch: ''
+                    phone: "",
+                    branch: "",
                 });
             }
         } catch (error) {
-            console.error('Error al crear el empleado:', error);
+            console.error("Error al crear el empleado:", error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const toggleEmployeeEdit = (employeeId) => {
-        setEditingEmployeeId(editingEmployeeId === employeeId ? null : employeeId);
+        setEditingEmployeeId(
+            editingEmployeeId === employeeId ? null : employeeId
+        );
     };
 
     const handleEmployeeUpdate = async (e, employeeId) => {
@@ -138,13 +150,16 @@ function Employees() {
                 branch: form.branch.value,
             };
 
-            const response = await apiClient.patch(`/branchStaff/${employeeId}`, updatedEmployee);
+            const response = await apiClient.patch(
+                `/branchStaff/${employeeId}`,
+                updatedEmployee
+            );
             if (response.status === 200) {
                 setEditingEmployeeId(null);
                 fetchEmployees();
             }
         } catch (error) {
-            console.error('Error al actualizar el empleado:', error);
+            console.error("Error al actualizar el empleado:", error);
         }
     };
 
@@ -165,7 +180,9 @@ function Employees() {
         return (
             <div className="min-h-screen bg-gray-100 flex justify-center items-center">
                 <div className="bg-white p-6 rounded-lg shadow-lg">
-                    <h2 className="text-2xl font-bold text-red-600 mb-4">Error</h2>
+                    <h2 className="text-2xl font-bold text-red-600 mb-4">
+                        Error
+                    </h2>
                     <p>{error}</p>
                 </div>
             </div>
@@ -177,11 +194,12 @@ function Employees() {
             <ManagerNavbar />
             <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-20">
                 <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-3xl font-bold text-gray-900">Empleados</h1>
+                    <h1 className="text-3xl font-bold text-gray-900">
+                        Empleados
+                    </h1>
                     <button
                         onClick={() => setIsModalOpen(true)}
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                    >
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                         Agregar Empleado
                     </button>
                 </div>
@@ -192,10 +210,18 @@ function Employees() {
                             <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                                 <th className="py-3 px-6 text-left">Usuario</th>
                                 <th className="py-3 px-6 text-left">Email</th>
-                                <th className="py-3 px-6 text-left">Teléfono</th>
-                                <th className="py-3 px-6 text-left">Sucursal</th>
-                                <th className="py-3 px-6 text-left">Fecha de Inicio</th>
-                                <th className="py-3 px-6 text-center">Acciones</th>
+                                <th className="py-3 px-6 text-left">
+                                    Teléfono
+                                </th>
+                                <th className="py-3 px-6 text-left">
+                                    Sucursal
+                                </th>
+                                <th className="py-3 px-6 text-left">
+                                    Fecha de Inicio
+                                </th>
+                                <th className="py-3 px-6 text-center">
+                                    Acciones
+                                </th>
                             </tr>
                         </thead>
                         <tbody className="text-gray-600 text-sm font-light">
@@ -225,4 +251,4 @@ function Employees() {
     );
 }
 
-export default withAuth(Employees, 'Manager');
+export default withAuth(Employees, "Manager");
