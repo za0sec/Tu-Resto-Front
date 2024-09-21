@@ -19,7 +19,7 @@ export default function ManagerNavbar({ restaurantId }) {
         { name: 'Sucursales', href: '/manager/branches' },
         { name: 'Empleados', href: '/manager/employees' },
         { name: 'Productos', href: `/manager/products/category` },
-        // { name: 'Mesas', href: '/manager/tables' },
+        { name: 'Mesas', href: '/manager/tables' },
         // { name: 'Ordenes', href: '/manager/orders' },
     ];
 

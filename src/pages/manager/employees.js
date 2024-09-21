@@ -7,6 +7,7 @@ import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import NewEmployeeDialog from './newEmployeeDialog';
 import EmployeePreview from './EmployeePreview';
+
 function Employees() {
     const [employees, setEmployees] = useState([]);
     const [branches, setBranches] = useState([]);

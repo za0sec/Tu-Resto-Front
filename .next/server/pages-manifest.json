@@ -1,1 +1,10 @@
-{"/_app":"pages/_app.js","/_error":"pages/_error.js","/_document":"pages/_document.js","/admin/dashboard":"pages/admin/dashboard.html","/admin/restaurants":"pages/admin/restaurants.html","/admin/restaurants/restaurant":"pages/admin/restaurants/restaurant.html","/branchstaff/editorder":"pages/branchstaff/editorder.html","/branchstaff/dashboard":"pages/branchstaff/dashboard.html","/branchstaff/orderstest":"pages/branchstaff/orderstest.html","/change-password":"pages/change-password.html","/branchstaff/tables":"pages/branchstaff/tables.html","/company/assignation":"pages/company/assignation.html","/company/branch":"pages/company/branch.html","/company/branches":"pages/company/branches.html","/":"pages/index.html","/forgot-password":"pages/forgot-password.html","/manager/EmployeePreview":"pages/manager/EmployeePreview.html","/manager/branches":"pages/manager/branches.html","/manager/branches/branch":"pages/manager/branches/branch.html","/manager/dailyOrders":"pages/manager/dailyOrders.html","/manager/dashboard":"pages/manager/dashboard.html","/manager/employees":"pages/manager/employees.html","/manager/menu":"pages/manager/menu.html","/manager/newBranchDialog":"pages/manager/newBranchDialog.html","/manager/newEmployeeDialog":"pages/manager/newEmployeeDialog.html","/manager/products":"pages/manager/products.html","/manager/products/ProductPreview":"pages/manager/products/ProductPreview.html","/manager/products/category":"pages/manager/products/category.html","/manager/products/newCategoryDialog":"pages/manager/products/newCategoryDialog.html","/manager/products/newProductDialog":"pages/manager/products/newProductDialog.html","/manager/reservations":"pages/manager/reservations.html","/profile":"pages/profile.html","/reset-password":"pages/reset-password.html","/unauthorized":"pages/unauthorized.html","/404":"pages/404.html"}
+{
+  "/_app": "pages/_app.js",
+  "/_error": "pages/_error.js",
+  "/_document": "pages/_document.js",
+  "/admin/restaurants/restaurant": "pages/admin/restaurants/restaurant.js",
+  "/manager/tables": "pages/manager/tables.js",
+  "/manager/branches": "pages/manager/branches.js",
+  "/manager/employees": "pages/manager/employees.js",
+  "/manager/branches/branch": "pages/manager/branches/branch.js"
+}
