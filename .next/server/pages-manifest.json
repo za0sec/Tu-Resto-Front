@@ -1,9 +1,0 @@
-{
-  "/_app": "pages/_app.js",
-  "/_error": "pages/_error.js",
-  "/_document": "pages/_document.js",
-  "/manager/dashboard": "pages/manager/dashboard.js",
-  "/manager/tables": "pages/manager/tables.js",
-  "/manager/branches": "pages/manager/branches.js",
-  "/manager/branches/branch": "pages/manager/branches/branch.js"
-}

@@ -19,6 +19,10 @@
 *.pem
 
 .next/*
+.next
+.next/cache
+.next/trace
+.next/server
 
 # debug
 npm-debug.log*
