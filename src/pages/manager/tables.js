@@ -5,7 +5,7 @@ import ManagerNavbar from '@/components/ManagerNavbar';
 import apiClient from '/utils/apiClient';
 import Cookies from 'js-cookie';
 import Table from '@/components/Table';
-
+import { FaTrash } from 'react-icons/fa';
 const Tables = () => {
     const [tables, setTables] = useState([]);
     const [newTableNumber, setNewTableNumber] = useState('');
@@ -13,6 +13,7 @@ const Tables = () => {
     const [newTableBookable, setNewTableBookable] = useState(true);
     const [branches, setBranches] = useState([]);
     const [selectedBranch, setSelectedBranch] = useState('');
+    const [selectedTable, setSelectedTable] = useState(null);
 
     const gridSizeX = 20;
     const gridSizeY = 7; 
@@ -103,6 +104,16 @@ const Tables = () => {
         }
     }, [cellSize]);
 
+    const deleteTable = async (id) => {
+        try {
+            await apiClient.delete(`/table/${id}`);
+            setTables(prevTables => prevTables.filter(table => table.id !== id));
+            setSelectedTable(null);
+        } catch (error) {
+            console.error('Error deleting table:', error);
+        }
+    };
+
     const DraggableTable = ({ id, number, position }) => {
         const [{ isDragging }, drag] = useDrag({
             type: 'TABLE',
@@ -130,14 +141,15 @@ const Tables = () => {
         });
 
         return (
-            <Table
-                number={number}
-                position={position}
-                tableSize={tableSize}
-                isDragging={isDragging}
-                drag={drag}
-            />
-            
+            <div onClick={() => setSelectedTable(id)}>
+                <Table
+                    number={number}
+                    position={position}
+                    tableSize={tableSize}
+                    isDragging={isDragging}
+                    drag={drag}
+                />
+            </div>
         );
     };
 
@@ -186,10 +198,18 @@ const Tables = () => {
                     </label>
                     <button 
                         onClick={addTable}
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-4 h-10 rounded mb-2"
+                        className="bg-secondary hover:bg-secondaryDark text-white font-bold px-4 h-10 rounded-full mb-2"
                     >
                         Add New Table
                     </button>
+                    {selectedTable && (
+                        <button 
+                            onClick={() => deleteTable(selectedTable)}
+                            className="bg-red-500 hover:bg-red-700 text-white font-bold px-4 h-10 rounded-full mb-2 ml-2"
+                        >
+                            <FaTrash />
+                        </button>
+                    )}
                 </div>
                 <DndProvider backend={HTML5Backend}>
                     <div 
