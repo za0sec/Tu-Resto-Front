@@ -3,7 +3,6 @@ import Navbar from "../components/Navbar";
 import HeroSection from "../components/HeroSection";
 import LoginModal from "../components/LoginModal";
 import { useRouter } from "next/router";
-import Subscription from "../components/subscription";
 import Cookies from "js-cookie";
 import { useEffect } from "react";
 import config from "/utils/config";
