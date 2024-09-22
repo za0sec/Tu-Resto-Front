@@ -7,12 +7,14 @@ import OrderItemsList from "@/components/OrderItemsList";
 
 const Tables = () => {
     const [tables, setTables] = useState([]);
-    const gridSizeX = 20;
+    const gridSizeX = 18;
     const gridSizeY = 7;
     const cellSize = 60;
     const tableSize = 50;
     const containerRef = useRef(null);
     const [selectedTable, setSelectedTable] = useState(null);
+    const [selectedOrder, setSelectedOrder] = useState(null);
+
     useEffect(() => {
         fetchTables();
     }, []);
@@ -30,24 +32,55 @@ const Tables = () => {
             console.error("Error fetching tables:", error);
         }
     };
-
     const fetchOrder = async () => {
         try {
-            const response = await apiClient.get(
-                `/order/table/${selectedTable.id}`
-            );
-            console.log(response.data);
+            const response = await apiClient.get(`/orders/table/${selectedTable}`);
+    
+            if (response.data.length === 0) {
+                console.log('No hay órdenes disponibles para esta mesa.');
+                setSelectedOrder(null); // O establece un valor predeterminado
+                return; // Salir de la función si no hay órdenes
+            }
+    
+            const orderDetails = await apiClient.get(`/order/${response.data[0].id}`);
+            console.log('details', orderDetails.data);
+            setSelectedOrder(orderDetails.data);
         } catch (error) {
             console.error("Error fetching order:", error);
         }
     };
-
+    
     useEffect(() => {
         if (selectedTable) {
-            // fetchOrder(selectedTable);
+            fetchOrder(selectedTable);
         }
     }, [selectedTable]);
+    
 
+    const handleUpdateOrder = async (orderId) => {
+        try {
+            if (!selectedOrder) {
+                console.error("No hay orden seleccionada para actualizar");
+                return;
+            }
+            router.push(
+                `/branchstaff/editorder?id=${orderId}&orderType=${orderType}`
+            );
+        } catch (error) {
+            console.error(
+                "Error al actualizar la orden:",
+                error.response?.data || error.message
+            );
+        }
+    };
+
+    const openDeleteDialog = (orderId) => {
+        setOrderToDelete(orderId);
+        setIsDeleteDialogOpen(true);
+    };
+    const handleTableClick = (table) => {
+        setSelectedTable(prevSelectedId => (prevSelectedId === table.id ? null : table.id));
+    };
     return (
         <div className="min-h-screen bg-gray-100">
             <EmployeeNavbar />
@@ -69,22 +102,25 @@ const Tables = () => {
                         {tables.map((table) => (
                             <div
                                 key={table.id}
-                                onClick={() => setSelectedTable(table.id)}>
+                                onClick={() => handleTableClick(table)}>
                                 <Table
                                     number={table.number}
                                     position={table.position}
                                     tableSize={50}
                                     isDragging={null}
                                     drag={null}
+                                    color={selectedTable === table.id ? 'red' : 'blue'} 
                                 />
                             </div>
                         ))}
                     </div>
-                    {/* <OrderItemsList
+                    <div className="w-full md:w-1/3 bg-white shadow-lg rounded-lg overflow-hidden flex flex-col">
+                    <OrderItemsList
                         selectedOrder={selectedOrder}
                         handleUpdateOrder={handleUpdateOrder}
                         openDeleteDialog={openDeleteDialog}
-                    /> */}
+                        />
+                    </div>
                 </div>
             </div>
         </div>

@@ -53,6 +53,7 @@ export default function BranchDashboard() {
     const selectOrder = async (orderId) => {
         try {
             const orderDetails = await apiClient.get(`/order/${orderId}`);
+            console.log('orderdetails', orderDetails);
             setSelectedOrder(orderDetails.data);
             const orderTypeMap = {
                 TableOrder: "table",

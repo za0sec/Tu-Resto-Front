@@ -20,7 +20,7 @@ const Tables = () => {
     const cellSize = 60;
     const tableSize = 50;
     const containerRef = useRef(null);
-
+    const color = 'blue';
     useEffect(() => {
         const fetchBranches = async () => {
             const restaurantId = Cookies.get("user_restaurant_id");
@@ -166,15 +166,17 @@ const Tables = () => {
         });
 
         return (
-            <div onClick={() => setSelectedTable(id)}>
-                <Table
-                    number={number}
-                    position={position}
-                    tableSize={tableSize}
-                    isDragging={isDragging}
-                    drag={drag}
-                />
-            </div>
+            <div onClick={() => setSelectedTable({ id, color: color })}>
+            <Table
+                number={number}
+                position={position}
+                tableSize={tableSize}
+                isDragging={isDragging}
+                drag={drag}
+                color={color}
+            />
+        </div>
+        
         );
     };
 
