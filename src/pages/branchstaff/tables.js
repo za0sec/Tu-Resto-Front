@@ -10,11 +10,10 @@ const Tables = () => {
     const gridSizeX = 18;
     const gridSizeY = 7;
     const cellSize = 60;
-    const tableSize = 50;
     const containerRef = useRef(null);
     const [selectedTable, setSelectedTable] = useState(null);
     const [selectedOrder, setSelectedOrder] = useState(null);
-
+    
     useEffect(() => {
         fetchTables();
     }, []);
@@ -35,15 +34,14 @@ const Tables = () => {
     const fetchOrder = async () => {
         try {
             const response = await apiClient.get(`/orders/table/${selectedTable}`);
-    
+            console.log('response', response.data)
             if (response.data.length === 0) {
                 console.log('No hay órdenes disponibles para esta mesa.');
                 setSelectedOrder(null); // O establece un valor predeterminado
                 return; // Salir de la función si no hay órdenes
             }
-    
+            
             const orderDetails = await apiClient.get(`/order/${response.data[0].id}`);
-            console.log('details', orderDetails.data);
             setSelectedOrder(orderDetails.data);
         } catch (error) {
             console.error("Error fetching order:", error);
@@ -106,7 +104,6 @@ const Tables = () => {
                                 <Table
                                     number={table.number}
                                     position={table.position}
-                                    tableSize={50}
                                     isDragging={null}
                                     drag={null}
                                     color={selectedTable === table.id ? 'red' : 'blue'} 

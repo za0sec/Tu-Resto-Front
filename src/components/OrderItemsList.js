@@ -11,7 +11,6 @@ const OrderItemsList = ({ selectedOrder, handleUpdateOrder, openDeleteDialog }) 
             </div>
         );
     }
-
     return (
         <div className="p-6">
             <div className="flex justify-between items-center mb-6">
@@ -23,7 +22,7 @@ const OrderItemsList = ({ selectedOrder, handleUpdateOrder, openDeleteDialog }) 
                     <FaEdit className="mr-2" /> Editar Orden
                 </button>
             </div>
-            <div className="rounded-lg p-4 mb-6">
+            <div className="rounded-lg">
                 <h3 className="text-xl font-medium mb-4 text-gray-700">Ítems del pedido:</h3>
                 <div className="border-b border-gray-200 mb-4"></div>
                 <ul className="divide-y divide-gray-200">
@@ -39,8 +38,11 @@ const OrderItemsList = ({ selectedOrder, handleUpdateOrder, openDeleteDialog }) 
                 </ul>
             </div>
             <div className="mb-6">
-                <p className="text-gray-700">Responsable de la orden: {selectedOrder.branch_staff?.user?.first_name} {selectedOrder.branch_staff?.user?.last_name}</p>
+                <p className="text-gray-700">
+                    <strong>Responsable de la orden:</strong> {selectedOrder.branch_staff?.user?.first_name} {selectedOrder.branch_staff?.user?.last_name}
+                </p>
             </div>
+
             <div className="flex justify-end space-x-4">
                 <button
                     onClick={() => openDeleteDialog(selectedOrder.id)}
