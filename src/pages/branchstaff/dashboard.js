@@ -50,9 +50,30 @@ export default function BranchDashboard() {
         fetchOrders();
     }, []);
 
+    const handleCloseOrder = async (orderId) => {
+        try {
+            const response = await apiClient.patch(
+                `/order/${orderType}/${orderId}`,
+                {
+                    ready: true,
+                }
+            );
+
+            if (response.status === 200) {
+                console.log("Orden cerrada exitosamente");
+                setOrders((prevOrders) =>
+                    prevOrders.filter((order) => order.id !== orderId)
+                );
+            }
+        } catch (error) {
+            console.error("Error al cerrar la orden:", error);
+        }
+    };
+
     const selectOrder = async (orderId) => {
         try {
             const orderDetails = await apiClient.get(`/order/${orderId}`);
+            console.log("orderdetails", orderDetails);
             setSelectedOrder(orderDetails.data);
             const orderTypeMap = {
                 TableOrder: "table",
@@ -224,6 +245,7 @@ export default function BranchDashboard() {
                             selectedOrder={selectedOrder}
                             handleUpdateOrder={handleUpdateOrder}
                             openDeleteDialog={openDeleteDialog}
+                            handleCloseOrder={handleCloseOrder}
                         />
                     </div>
                 </div>

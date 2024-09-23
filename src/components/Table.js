@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Table = ({ number, position, tableSize, isDragging, drag }) => {
+const Table = ({ number, position, isDragging, drag, color }) => {
     return (
         <div
             ref={drag}
@@ -10,9 +10,9 @@ const Table = ({ number, position, tableSize, isDragging, drag }) => {
                 top: `${position.y}px`,
                 opacity: isDragging ? 0.5 : 1,
                 cursor: 'move',
-                width: `${tableSize}px`,
-                height: `${tableSize}px`,
-                backgroundColor: 'blue',
+                width: `50px`,
+                height: `50px`,
+                backgroundColor: color,
                 borderRadius: '50%',
                 display: 'flex',
                 justifyContent: 'center',

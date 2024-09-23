@@ -20,6 +20,7 @@ const Tables = () => {
     const cellSize = 60;
     const tableSize = 50;
     const containerRef = useRef(null);
+    // const color = 'blue';
 
     useEffect(() => {
         const fetchBranches = async () => {
@@ -30,6 +31,7 @@ const Tables = () => {
                 );
                 setBranches(response.data);
                 if (response.data.length > 0) {
+                    console.log('data', response.data)
                     setSelectedBranch(response.data[0].id);
                 }
             } catch (error) {
@@ -164,19 +166,22 @@ const Tables = () => {
                 }
             },
         });
+        const color = selectedTable == id ? "red" : "blue";
 
         return (
             <div onClick={() => setSelectedTable(id)}>
-                <Table
-                    number={number}
-                    position={position}
-                    tableSize={tableSize}
-                    isDragging={isDragging}
-                    drag={drag}
-                />
-            </div>
+            <Table
+                number={number}
+                position={position}
+                isDragging={isDragging}
+                drag={drag}
+                color={color}
+            />
+        </div>
+        
         );
     };
+
 
     return (
         <div className="min-h-screen bg-gray-100">
