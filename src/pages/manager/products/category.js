@@ -125,8 +125,24 @@ function CategoryProducts() {
                 }
             );
             if (response.status === 201) {
+                const newProduct = response.data; 
+                const updatedCategories = categories.map((category) => {
+                    if (category.id === selectedCategory.id) {
+                        return {
+                            ...category,
+                            products: [...category.products, newProduct],
+                        };
+                    }
+                    return category;
+                });
+    
+                setCategories(updatedCategories); 
+                setSelectedCategory((prevCategory) => ({
+                    ...prevCategory,
+                    products: [...prevCategory.products, newProduct],
+                }));
+    
                 setIsModalOpen(false);
-                fetchCategories();
                 setNewProduct({
                     name: "",
                     description: "",
@@ -180,8 +196,10 @@ function CategoryProducts() {
             );
 
             if (response.status === 201) {
+                const newCategory = response.data;
+                await fetchCategories();
+                setSelectedCategory(newCategory);
                 setIsCategoryModalOpen(false);
-                fetchCategories();
                 setNewCategory({
                     name: "",
                     description: "",
@@ -249,15 +267,53 @@ function CategoryProducts() {
     };
 
     const handleDeleteConfirm = async () => {
+
         try {
-            await apiClient.delete(`/product/${productToDelete.id}/`);
-            setIsDeleteModalOpen(false);
-            setProductToDelete(null);
-            fetchCategories();
+            const response = await apiClient.delete(
+                `/product/${productToDelete.id}`
+            );
+            if (response.status === 204) {
+                // Update the local state to remove the deleted product
+                const updatedCategories = categories.map((category) => {
+                    if (category.id === selectedCategory.id) {
+                        return {
+                            ...category,
+                            products: category.products.filter(
+                                (product) => product.id !== productToDelete.id
+                            ),
+                        };
+                    }
+                    return category;
+                });
+
+                setCategories(updatedCategories);
+                setSelectedCategory((prevCategory) => ({
+                    ...prevCategory,
+                    products: prevCategory.products.filter(
+                        (product) => product.id !== productToDelete.id
+                    ),
+                }));
+
+                setProductToDelete(null);
+                setIsDeleteModalOpen(false);
+            }
         } catch (error) {
             console.error("Error al eliminar el producto:", error);
+            if (error.response) {
+                console.error("Detalles del error:", error.response.data);
+            }
         }
     };
+    // const handleDeleteConfirm = async () => {
+    //     try {
+    //         await apiClient.delete(`/product/${productToDelete.id}/`);
+    //         setIsDeleteModalOpen(false);
+    //         setProductToDelete(null);
+    //         fetchCategories();
+    //     } catch (error) {
+    //         console.error("Error al eliminar el producto:", error);
+    //     }
+    // };
 
     return (
         <div className="bg-gray-100 min-h-screen flex flex-col">
@@ -303,8 +359,8 @@ function CategoryProducts() {
                         </h1>
                         <button
                             onClick={() => setIsModalOpen(true)}
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center group">
-                            <FaPlus className="mr-2 transition-transform duration-300 group-hover:rotate-90" />{" "}
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full flex items-center group">
+                            <FaPlus className="mr-2 transition-transform duration-300 group-hover:rotate-90 " />{" "}
                             Agregar Producto
                         </button>
                     </div>

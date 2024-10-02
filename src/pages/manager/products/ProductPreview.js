@@ -6,7 +6,6 @@ const ProductPreview = ({ product, onEdit, onDelete }) => {
     const [isEditing, setIsEditing] = React.useState(false);
 
     const toggleEdit = () => setIsEditing(!isEditing);
-
     const handleSubmit = (e) => {
         e.preventDefault();
         onEdit(product.id, {
@@ -41,12 +40,12 @@ const ProductPreview = ({ product, onEdit, onDelete }) => {
                     <span>{product?.discount}%</span>
                 </td>
                 <td className="py-3 px-6 text-center">
-                    <div className="flex item-center justify-center">
+                    <div className="flex items-center justify-center">
                         <button
                             className="w-4 mr-2 transform hover:text-red-500 hover:scale-110"
                             onClick={(e) => {
-                                e.stopPropagation();
-                                onDelete(product);
+                                //e.stopPropagation(); // Prevent triggering row click
+                                onDelete(e, product); // Call the onDelete function with the product
                             }}
                         >
                             <FaTrash />
