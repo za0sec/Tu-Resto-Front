@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import NewEmployeeDialog from "./newEmployeeDialog";
 import EmployeePreview from "./EmployeePreview";
+import { FaPlus } from "react-icons/fa";
 
 function Employees() {
     const [employees, setEmployees] = useState([]);
@@ -192,14 +193,15 @@ function Employees() {
     return (
         <div className="bg-gray-100 min-h-screen flex flex-col">
             <ManagerNavbar />
-            <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 mt-20">
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-3xl font-bold text-gray-900">
                         Empleados
                     </h1>
                     <button
                         onClick={() => setIsModalOpen(true)}
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        className="bg-secondary text-white px-6 py-3 rounded-full hover:bg-secondaryDark transition duration-300 flex items-center shadow-lg">
+                        <FaPlus className="mr-2" />
                         Agregar Empleado
                     </button>
                 </div>

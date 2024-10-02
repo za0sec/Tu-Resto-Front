@@ -5,7 +5,8 @@ import ManagerNavbar from "@/components/ManagerNavbar";
 import apiClient from "/utils/apiClient";
 import Cookies from "js-cookie";
 import Table from "@/components/Table";
-import { FaTrash } from "react-icons/fa";
+import { FaTrash, FaPlus } from "react-icons/fa";
+import { useRouter } from "next/router";
 const Tables = () => {
     const [tables, setTables] = useState([]);
     const [newTableNumber, setNewTableNumber] = useState("");
@@ -21,8 +22,13 @@ const Tables = () => {
     const tableSize = 50;
     const containerRef = useRef(null);
     // const color = 'blue';
+    const router = useRouter();
 
     useEffect(() => {
+        const { branch } = router.query;
+        if (branch) {
+            setSelectedBranch(branch);
+        }
         const fetchBranches = async () => {
             const restaurantId = Cookies.get("user_restaurant_id");
             try {
@@ -40,7 +46,7 @@ const Tables = () => {
         };
 
         fetchBranches();
-    }, []);
+    }, [router.query]);
 
     useEffect(() => {
         if (selectedBranch) {
@@ -93,7 +99,7 @@ const Tables = () => {
     };
 
     const moveTable = useCallback(
-        async (id, left, top) => {
+        async (id, left, top, originalPosition) => {
             const gridX = Math.round(left / cellSize);
             const gridY = Math.round(top / cellSize);
             const centerOffset = (cellSize - tableSize) / 2;
@@ -117,6 +123,13 @@ const Tables = () => {
                 });
             } catch (error) {
                 console.error("Error updating table position:", error);
+                setTables((prevTables) =>
+                    prevTables.map((table) =>
+                        table.id === id
+                            ? { ...table, position: originalPosition }
+                            : table
+                    )
+                );
             }
         },
         [cellSize]
@@ -161,8 +174,8 @@ const Tables = () => {
 
                     const gridX = Math.round(boundedLeft / cellSize);
                     const gridY = Math.round(boundedTop / cellSize);
-
-                    moveTable(item.id, gridX * cellSize, gridY * cellSize);
+                    const originalPosition = {...position};
+                    moveTable(item.id, gridX * cellSize, gridY * cellSize, originalPosition);
                 }
             },
         });
@@ -190,7 +203,9 @@ const Tables = () => {
                 <h1 className="text-4xl font-bold mb-4 text-gray-800">
                     Table Layout
                 </h1>
-                <div className="flex flex-wrap items-center mb-4">
+                <div className="flex flex-wrap items-center justify-between mb-4" >
+
+                <div className="flex flex-wrap items-center">
                     <select
                         value={selectedBranch}
                         onChange={(e) => {
@@ -229,11 +244,7 @@ const Tables = () => {
                         />
                         Bookable
                     </label>
-                    <button
-                        onClick={addTable}
-                        className="bg-secondary hover:bg-secondaryDark text-white font-bold px-4 h-10 rounded-full mb-2">
-                        Add New Table
-                    </button>
+                   
                     {selectedTable && (
                         <button
                             onClick={() => deleteTable(selectedTable)}
@@ -242,6 +253,14 @@ const Tables = () => {
                         </button>
                     )}
                 </div>
+                <button
+                        onClick={addTable}
+                        className="bg-secondary text-white px-6 py-3 rounded-full hover:bg-secondaryDark transition duration-300 flex items-center shadow-lg">
+                        <FaPlus className="mr-2" />
+                        Add New Table
+                    </button>
+                </div>
+
                 <DndProvider backend={HTML5Backend}>
                     <div
                         ref={containerRef}

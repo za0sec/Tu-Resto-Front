@@ -59,7 +59,7 @@ export default function AdminNavbar() {
                     <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between sm:h-10 lg:justify-start bg-white shadow-md px-10 py-10" aria-label="Global">
                         <div className="flex items-center justify-start space-x-4 lg:flex-grow">
                             <Link href="/admin/dashboard">
-                                <div className="bg-blue-500 p-2 rounded-full mr-10 cursor-pointer">
+                                <div className="bg-secondary p-2 rounded-full mr-10 cursor-pointer">
                                     <img className="h-8 w-8" src="/svg/fork.svg" alt="Icono" />
                                 </div>
                             </Link>

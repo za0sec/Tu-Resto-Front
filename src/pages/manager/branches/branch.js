@@ -12,13 +12,11 @@ import withAuth from '../../../components/withAuth';
 import { motion, AnimatePresence } from 'framer-motion';
 import { jwtDecode } from 'jwt-decode';
 import React from 'react';
-import { FaUser, FaPhone, FaCalendar, FaBuilding, FaTrash } from 'react-icons/fa';
+import { FaUser, FaPhone, FaCalendar, FaPlus, FaTrash } from 'react-icons/fa';
 import NewBranchDialog from '../newBranchDialog';
 
 function Branch() {
-    const router = useRouter();
-    const { id } = router.query;
-
+  
     const [firstName, setFirstName] = useState(null);
     const [employees, setEmployees] = useState([]);
     const [branches, setBranches] = useState([]);
@@ -30,6 +28,8 @@ function Branch() {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const router = useRouter();
+    const { id } = router.query;
     const [newEmployee, setNewEmployee] = useState({
         user: {
             first_name: '',
@@ -213,6 +213,10 @@ function Branch() {
         );
     }
 
+    const handleAddLayout = () => {
+        router.push(`/manager/tables?branch=${id}`);
+    };
+
     return (
         <div className="bg-gray-100 min-h-screen flex flex-col overflow-auto">
             <ManagerNavbar />
@@ -221,6 +225,13 @@ function Branch() {
                     <h1 className="text-5xl font-bold text-gray-800">
                         Buenos días, <span className="text-primary">{firstName}</span>
                     </h1>
+                    
+                    <button
+                         onClick={handleAddLayout}
+                        className="bg-secondary text-white px-6 py-3 rounded-full hover:bg-secondaryDark transition duration-300 flex items-center shadow-lg">
+                        <FaPlus className="mr-2" />
+                        Añadir Layout
+                    </button>
                 </div>
 
                 <div className="mb-10">
@@ -298,7 +309,7 @@ function Branch() {
                         <h2 className="text-2xl font-bold text-gray-800">Empleados de la Sucursal</h2>
                         <button
                             onClick={() => setIsModalOpen(true)}
-                            className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primaryDark transition duration-300"
+                            className="bg-primary text-white px-4 py-2 rounded-full hover:bg-primaryDark transition duration-300"
                         >
                             Agregar Empleado
                         </button>

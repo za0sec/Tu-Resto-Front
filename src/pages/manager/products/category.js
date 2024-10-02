@@ -359,8 +359,8 @@ function CategoryProducts() {
                         </h1>
                         <button
                             onClick={() => setIsModalOpen(true)}
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full flex items-center group">
-                            <FaPlus className="mr-2 transition-transform duration-300 group-hover:rotate-90 " />{" "}
+                            className="bg-secondary text-white px-6 py-3 rounded-full hover:bg-secondaryDark transition duration-300 flex items-center shadow-lg">
+                        <FaPlus className="mr-2" />
                             Agregar Producto
                         </button>
                     </div>
