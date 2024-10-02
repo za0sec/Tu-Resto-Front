@@ -215,6 +215,30 @@ function CategoryProducts() {
     const toggleProductEdit = (productId) => {
         setEditingProductId(editingProductId === productId ? null : productId);
     };
+    const fetchProducts = async () => {
+        try {
+            const response = await apiClient.get(
+                `/restaurant/${restaurantId}/categories`
+            );
+            if (response.status === 200) {
+                setCategories(response.data);
+                // Update selectedCategory if it exists in the new data
+                if (selectedCategory) {
+                    const updatedSelectedCategory = response.data.find(
+                        category => category.id === selectedCategory.id
+                    );
+                    if (updatedSelectedCategory) {
+                        setSelectedCategory(updatedSelectedCategory);
+                    }
+                }
+            } else {
+                setError("Error al obtener las categorías y productos");
+            }
+        } catch (error) {
+            console.error("Error al obtener datos:", error);
+            setError("Error al cargar los datos");
+        }
+    };
 
     const handleProductUpdate = async (productId, updatedData) => {
         try {
@@ -226,7 +250,8 @@ function CategoryProducts() {
             );
             if (response.status === 200) {
                 setEditingProductId(null);
-                await fetchCategories(); // Esperar a que se complete la actualización
+                await fetchCategories();
+                await fetchProducts();
                 console.log("Producto actualizado:", response.data); // Verificar la respuesta
             } else {
                 console.error("Error en la respuesta:", response);
