@@ -3,12 +3,12 @@ import EmployeeNavbar from "../../components/EmployeeNavbar";
 import apiClient from "/utils/apiClient";
 import OrderModal from "../../components/CreateOrderDialog";
 import { useRouter } from "next/router";
-import { FaPlus, FaTimes } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import Cookies from "js-cookie";
 import OrderItemsList from "../../components/OrderItemsList";
-
+import { FaUtensils, FaRunning } from "react-icons/fa";
 export default function BranchDashboard() {
     const [branchId, setBranchId] = useState(null);
     const [orders, setOrders] = useState([]);
@@ -227,14 +227,21 @@ export default function BranchDashboard() {
                                     key={order.id}
                                     className="flex justify-between items-center p-4 hover:bg-gray-50 cursor-pointer transition duration-150 ease-in-out"
                                     onClick={() => selectOrder(order.id)}>
-                                    <div>
-                                        <p className="text-lg font-semibold text-gray-800">
-                                            Pedido #{order?.id}
-                                        </p>
-                                        <p className="text-sm text-gray-600">
-                                            Items: {order?.items.length} -
-                                            Total: ${order?.total}
-                                        </p>
+                                    <div className="flex items-center">
+                                        {order?.table ? (
+                                            <FaUtensils className="text-xl mr-3 text-blue-500" />
+                                        ) : (
+                                            <FaRunning className="text-xl mr-3 text-green-500" />
+                                        )}
+                                        <div>
+                                            <p className="text-lg font-semibold text-gray-800">
+                                                Pedido #{order?.id}{" "}
+                                            </p>
+                                            <p className="text-sm text-gray-600">
+                                                Items: {order?.items.length} -
+                                                Total: ${order?.total}
+                                            </p>
+                                        </div>
                                     </div>
                                 </li>
                             ))}

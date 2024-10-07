@@ -1,5 +1,12 @@
 import React, { useEffect } from "react";
-import { FaEdit, FaTrash, FaTimes } from "react-icons/fa";
+import {
+    FaEdit,
+    FaTrash,
+    FaTimes,
+    FaUtensils,
+    FaRunning,
+    FaWhatsapp,
+} from "react-icons/fa";
 
 const OrderItemsList = ({
     selectedOrder,
@@ -29,11 +36,26 @@ const OrderItemsList = ({
                     <FaEdit className="mr-2" /> Editar Orden
                 </button>
             </div>
+            <div className="mb-4 flex items-center">
+                {selectedOrder.table ? (
+                    <>
+                        <FaUtensils className="text-xl mr-2 text-blue-500" />
+                        <span className="text-lg font-medium">
+                            Para comer aquí - Mesa {selectedOrder.table.number}
+                        </span>
+                    </>
+                ) : (
+                    <>
+                        <FaRunning className="text-xl mr-2 text-green-500" />
+                        <span className="text-lg font-medium">Para llevar</span>
+                    </>
+                )}
+            </div>
             <div className="rounded-lg">
+                <div className="border-b border-gray-200 mb-4"></div>
                 <h3 className="text-xl font-medium mb-4 text-gray-700">
                     Ítems del pedido:
                 </h3>
-                <div className="border-b border-gray-200 mb-4"></div>
                 <ul className="divide-y divide-gray-200">
                     {selectedOrder.items.map((item, index) => (
                         <li
@@ -68,11 +90,20 @@ const OrderItemsList = ({
                     className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition duration-300 flex items-center justify-center">
                     <FaTrash />
                 </button>
-                <button
-                    onClick={() => handleCloseOrder(selectedOrder.id)}
-                    className="bg-secondary text-white font-medium px-4 py-2 rounded-full hover:bg-secondaryDark">
-                    Cerrar Orden
-                </button>
+                {selectedOrder.table ? (
+                    <button
+                        onClick={() => handleCloseOrder(selectedOrder.id)}
+                        className="bg-secondary text-white font-medium px-4 py-2 rounded-full hover:bg-secondaryDark">
+                        Cerrar Orden
+                    </button>
+                ) : (
+                    <button
+                        onClick={() => handleCloseOrder(selectedOrder.id)}
+                        className="bg-green-500 text-white font-medium px-4 py-2 rounded-full hover:bg-green-600 flex items-center">
+                        <FaWhatsapp className="mr-2" />
+                        Pedido Listo
+                    </button>
+                )}
             </div>
         </div>
     );

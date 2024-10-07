@@ -125,8 +125,24 @@ function CategoryProducts() {
                 }
             );
             if (response.status === 201) {
+                const newProduct = response.data; 
+                const updatedCategories = categories.map((category) => {
+                    if (category.id === selectedCategory.id) {
+                        return {
+                            ...category,
+                            products: [...category.products, newProduct],
+                        };
+                    }
+                    return category;
+                });
+    
+                setCategories(updatedCategories); 
+                setSelectedCategory((prevCategory) => ({
+                    ...prevCategory,
+                    products: [...prevCategory.products, newProduct],
+                }));
+    
                 setIsModalOpen(false);
-                fetchCategories();
                 setNewProduct({
                     name: "",
                     description: "",
@@ -180,8 +196,10 @@ function CategoryProducts() {
             );
 
             if (response.status === 201) {
+                const newCategory = response.data;
+                await fetchCategories();
+                setSelectedCategory(newCategory);
                 setIsCategoryModalOpen(false);
-                fetchCategories();
                 setNewCategory({
                     name: "",
                     description: "",
@@ -197,6 +215,30 @@ function CategoryProducts() {
     const toggleProductEdit = (productId) => {
         setEditingProductId(editingProductId === productId ? null : productId);
     };
+    const fetchProducts = async () => {
+        try {
+            const response = await apiClient.get(
+                `/restaurant/${restaurantId}/categories`
+            );
+            if (response.status === 200) {
+                setCategories(response.data);
+                // Update selectedCategory if it exists in the new data
+                if (selectedCategory) {
+                    const updatedSelectedCategory = response.data.find(
+                        category => category.id === selectedCategory.id
+                    );
+                    if (updatedSelectedCategory) {
+                        setSelectedCategory(updatedSelectedCategory);
+                    }
+                }
+            } else {
+                setError("Error al obtener las categorías y productos");
+            }
+        } catch (error) {
+            console.error("Error al obtener datos:", error);
+            setError("Error al cargar los datos");
+        }
+    };
 
     const handleProductUpdate = async (productId, updatedData) => {
         try {
@@ -208,7 +250,8 @@ function CategoryProducts() {
             );
             if (response.status === 200) {
                 setEditingProductId(null);
-                await fetchCategories(); // Esperar a que se complete la actualización
+                await fetchCategories();
+                await fetchProducts();
                 console.log("Producto actualizado:", response.data); // Verificar la respuesta
             } else {
                 console.error("Error en la respuesta:", response);
@@ -249,15 +292,53 @@ function CategoryProducts() {
     };
 
     const handleDeleteConfirm = async () => {
+
         try {
-            await apiClient.delete(`/product/${productToDelete.id}/`);
-            setIsDeleteModalOpen(false);
-            setProductToDelete(null);
-            fetchCategories();
+            const response = await apiClient.delete(
+                `/product/${productToDelete.id}`
+            );
+            if (response.status === 204) {
+                // Update the local state to remove the deleted product
+                const updatedCategories = categories.map((category) => {
+                    if (category.id === selectedCategory.id) {
+                        return {
+                            ...category,
+                            products: category.products.filter(
+                                (product) => product.id !== productToDelete.id
+                            ),
+                        };
+                    }
+                    return category;
+                });
+
+                setCategories(updatedCategories);
+                setSelectedCategory((prevCategory) => ({
+                    ...prevCategory,
+                    products: prevCategory.products.filter(
+                        (product) => product.id !== productToDelete.id
+                    ),
+                }));
+
+                setProductToDelete(null);
+                setIsDeleteModalOpen(false);
+            }
         } catch (error) {
             console.error("Error al eliminar el producto:", error);
+            if (error.response) {
+                console.error("Detalles del error:", error.response.data);
+            }
         }
     };
+    // const handleDeleteConfirm = async () => {
+    //     try {
+    //         await apiClient.delete(`/product/${productToDelete.id}/`);
+    //         setIsDeleteModalOpen(false);
+    //         setProductToDelete(null);
+    //         fetchCategories();
+    //     } catch (error) {
+    //         console.error("Error al eliminar el producto:", error);
+    //     }
+    // };
 
     return (
         <div className="bg-gray-100 min-h-screen flex flex-col">
@@ -303,8 +384,8 @@ function CategoryProducts() {
                         </h1>
                         <button
                             onClick={() => setIsModalOpen(true)}
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center group">
-                            <FaPlus className="mr-2 transition-transform duration-300 group-hover:rotate-90" />{" "}
+                            className="bg-secondary text-white px-6 py-3 rounded-full hover:bg-secondaryDark transition duration-300 flex items-center shadow-lg">
+                        <FaPlus className="mr-2" />
                             Agregar Producto
                         </button>
                     </div>
