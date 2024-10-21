@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import apiClient from "/utils/apiClient";
 import EmployeeNavbar from "@/components/EmployeeNavbar";
 import Cookies from "js-cookie";
+import { FaPlus, FaEdit, FaTrash, FaCalendarAlt, FaClock, FaUsers, FaChair } from "react-icons/fa";
 
 const Reservations = () => {
     const [reservations, setReservations] = useState([]);
-    const [tables, setTables] = useState([]); // Estado para almacenar las mesas
-    const [showDialog, setShowDialog] = useState(false); 
-    const [isEditing, setIsEditing] = useState(false); // Estado para editar
-    const [selectedReservationId, setSelectedReservationId] = useState(null); // ID de la reserva seleccionada
+    const [tables, setTables] = useState([]);
+    const [showDialog, setShowDialog] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [selectedReservationId, setSelectedReservationId] = useState(null);
     const [newReservation, setNewReservation] = useState({
         name: '',
         phone: '',
@@ -17,21 +18,22 @@ const Reservations = () => {
         date: '',
         time: '',
         message: '',
-        branch: Cookies.get("user_branch_id") // Usar el branch ID desde la cookie
+        branch: Cookies.get("user_branch_id")
     });
 
     useEffect(() => {
         fetchReservations();
-        fetchTables();  // Obtener las mesas al cargar el componente
+        fetchTables();
     }, []);
 
     const fetchReservations = async () => {
         try {
             const branchId = Cookies.get("user_branch_id");
             const response = await apiClient.get(`/branch/${branchId}/reservations`);
-            setReservations(response.data);
+            const sortedReservations = response.data.sort((a, b) => a.time.localeCompare(b.time));
+            setReservations(sortedReservations);
         } catch (error) {
-            console.error("Error fetching reservations:", error);
+            console.error("Error al cargar las reservas", error);
         }
     };
 
@@ -39,9 +41,9 @@ const Reservations = () => {
         try {
             const branchId = Cookies.get("user_branch_id");
             const response = await apiClient.get(`/branch/${branchId}/tables`);
-            setTables(response.data); // Guardar las mesas obtenidas en el estado
+            setTables(response.data);
         } catch (error) {
-            console.error("Error fetching tables:", error);
+            console.error("Error al cargar las mesas", error);
         }
     };
 
@@ -53,42 +55,31 @@ const Reservations = () => {
     const handleCreateReservation = async () => {
         try {
             if (isEditing && selectedReservationId) {
-                // Si estamos editando, actualizamos la reserva
                 await apiClient.put(`/reservation/${selectedReservationId}`, newReservation);
             } else {
-                // Si es una nueva reserva, la creamos
                 await apiClient.post("/reservation/create", newReservation);
             }
-            setShowDialog(false); // Cerrar el diálogo después de crear o editar la reserva
-            fetchReservations();  // Refrescar la lista de reservas
-            resetForm();  // Resetear el formulario
+            setShowDialog(false);
+            fetchReservations();
+            resetForm();
         } catch (error) {
-            console.error("Error saving reservation:", error);
+            console.error("Error al guardar la reserva", error);
         }
     };
 
     const handleEditReservation = (reservation) => {
-        setNewReservation({
-            name: reservation.name,
-            phone: reservation.phone,
-            guests: reservation.guests,
-            table: reservation.table,
-            date: reservation.date,
-            time: reservation.time,
-            message: reservation.message,
-            branch: reservation.branch
-        });
+        setNewReservation({...reservation});
         setSelectedReservationId(reservation.id);
         setIsEditing(true);
-        setShowDialog(true);  // Mostrar el diálogo con los datos cargados
+        setShowDialog(true);
     };
 
     const handleDeleteReservation = async (id) => {
         try {
             await apiClient.delete(`/reservation/${id}`);
-            fetchReservations();  // Refrescar la lista después de borrar
+            fetchReservations();
         } catch (error) {
-            console.error("Error deleting reservation:", error);
+            console.error("Error al eliminar la reserva", error);
         }
     };
 
@@ -107,162 +98,143 @@ const Reservations = () => {
         setSelectedReservationId(null);
     };
 
-    // Crear opciones de tiempo con intervalos de 1 hora y media
-    const timeOptions = ["20:00", "21:30", "23:00"];
+    const timeOptions = ["20:00:00", "21:30:00", "23:00:00"];
 
     return (
         <div className="min-h-screen bg-gray-100">
             <EmployeeNavbar />
-            <div className="container mx-auto mb-3 mt-20 max-w-lg"> {/* Reducir el ancho */}
-                <h1 className="text-4xl font-bold mb-4 text-gray-800">
-                    Reservas
-                </h1>
+            <div className="container mx-auto px-4 mt-20">
+                <h1 className="text-4xl font-bold mb-8 text-gray-800">Gestión de Reservas</h1>
 
-                {/* Botón para abrir el diálogo de crear reserva */}
                 <button
                     onClick={() => { 
                         resetForm();
                         setShowDialog(true);
                     }}
-                    className="bg-blue-500 text-white px-4 py-2 rounded">
-                    Crear Reserva
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full mb-6 transition duration-300 ease-in-out transform hover:scale-105"
+                >
+                    <FaPlus className="inline mr-2" /> Nueva Reserva
                 </button>
 
-                {/* Mostrar el diálogo solo si showDialog es true */}
                 {showDialog && (
-                    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
-                        <div className="bg-white p-6 rounded shadow-lg w-full max-w-md">
-                            <h2 className="text-lg font-bold mb-4">
-                                {isEditing ? "Editar Reserva" : "Crear Nueva Reserva"}
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                        <div className="bg-white p-8 rounded-lg w-full max-w-md">
+                            <h2 className="text-2xl font-bold mb-6 text-gray-800">
+                                {isEditing ? "Editar Reserva" : "Nueva Reserva"}
                             </h2>
-
-                            <form>
-                                <label className="block mb-2">
-                                    Nombre:
-                                    <input 
-                                        type="text" 
-                                        name="name" 
-                                        value={newReservation.name} 
-                                        onChange={handleInputChange} 
-                                        className="border p-2 rounded w-full mb-2" 
-                                    />
-                                </label>
-
-                                <label className="block mb-2">
-                                    Teléfono:
-                                    <input 
-                                        type="text" 
-                                        name="phone" 
-                                        value={newReservation.phone} 
-                                        onChange={handleInputChange} 
-                                        className="border p-2 rounded w-full mb-2" 
-                                    />
-                                </label>
-
-                                <label className="block mb-2">
-                                    Número de Mesa:
-                                    <select
-                                        name="table"
-                                        value={newReservation.table}
-                                        onChange={handleInputChange}
-                                        className="border p-2 rounded w-full mb-2">
-                                        <option value="">Selecciona una mesa</option>
-                                        {tables.map((table) => (
-                                            <option key={table.id} value={table.id}>
-                                                Mesa {table.number} (Capacidad: {table.capacity})
-                                            </option>
-                                        ))}
-                                    </select>
-                                </label>
-
-                                <label className="block mb-2">
-                                    Capacidad:
-                                    <input 
-                                        type="number" 
-                                        name="guests" 
-                                        value={newReservation.guests} 
-                                        onChange={handleInputChange} 
-                                        className="border p-2 rounded w-full mb-2" 
-                                    />
-                                </label>
-
-                                <label className="block mb-2">
-                                    Fecha:
-                                    <input 
-                                        type="date" 
-                                        name="date" 
-                                        value={newReservation.date} 
-                                        onChange={handleInputChange} 
-                                        className="border p-2 rounded w-full mb-2" 
-                                    />
-                                </label>
-
-                                <label className="block mb-2">
-                                    Hora:
-                                    <select
-                                        name="time"
-                                        value={newReservation.time}
-                                        onChange={handleInputChange}
-                                        className="border p-2 rounded w-full mb-2">
-                                        {timeOptions.map((time) => (
-                                            <option key={time} value={time}>
-                                                {time}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </label>
-
-                                <label className="block mb-2">
-                                    Mensaje Adicional:
-                                    <textarea 
-                                        name="message" 
-                                        value={newReservation.message} 
-                                        onChange={handleInputChange} 
-                                        className="border p-2 rounded w-full mb-2" 
-                                    />
-                                </label>
-
-                                <button
-                                    type="button"
-                                    onClick={handleCreateReservation}
-                                    className="bg-green-500 text-white px-4 py-2 rounded w-full">
-                                    {isEditing ? "Guardar Cambios" : "Crear"}
-                                </button>
-
-                                <button
-                                    type="button"
-                                    onClick={() => setShowDialog(false)}
-                                    className="bg-red-500 text-white px-4 py-2 rounded w-full mt-2">
-                                    Cancelar
-                                </button>
+                            <form className="space-y-4">
+                                <input 
+                                    type="text" 
+                                    name="name" 
+                                    placeholder="Nombre"
+                                    value={newReservation.name} 
+                                    onChange={handleInputChange} 
+                                    className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                />
+                                <input 
+                                    type="text" 
+                                    name="phone" 
+                                    placeholder="Teléfono"
+                                    value={newReservation.phone} 
+                                    onChange={handleInputChange} 
+                                    className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                />
+                                <select
+                                    name="table"
+                                    value={newReservation.table}
+                                    onChange={handleInputChange}
+                                    className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                                    <option value="">Selecciona una mesa</option>
+                                    {tables.map((table) => (
+                                        <option key={table.id} value={table.id}>
+                                            Mesa {table.number} (Capacidad: {table.capacity})
+                                        </option>
+                                    ))}
+                                </select>
+                                <input 
+                                    type="number" 
+                                    name="guests" 
+                                    placeholder="Número de comensales"
+                                    value={newReservation.guests} 
+                                    onChange={handleInputChange} 
+                                    className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                />
+                                <input 
+                                    type="date" 
+                                    name="date" 
+                                    value={newReservation.date} 
+                                    onChange={handleInputChange} 
+                                    className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                />
+                                <select
+                                    name="time"
+                                    value={newReservation.time}
+                                    onChange={handleInputChange}
+                                    className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                                    {timeOptions.map((time) => (
+                                        <option key={time} value={time}>{time}</option>
+                                    ))}
+                                </select>
+                                <textarea 
+                                    name="message" 
+                                    placeholder="Mensaje adicional"
+                                    value={newReservation.message} 
+                                    onChange={handleInputChange} 
+                                    className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                />
+                                <div className="flex justify-end space-x-3">
+                                    <button
+                                        type="button"
+                                        onClick={handleCreateReservation}
+                                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition duration-300 ease-in-out"
+                                    >
+                                        {isEditing ? "Guardar" : "Crear"}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowDialog(false)}
+                                        className="bg-gray-300 hover:bg-gray-400 px-6 py-3 rounded-lg transition duration-300 ease-in-out"
+                                    >
+                                        Cancelar
+                                    </button>
+                                </div>
                             </form>
                         </div>
                     </div>
                 )}
 
-                <div className="mt-6">
-                    <h2 className="text-2xl font-semibold mb-4">Reservas Activas</h2>
-                    <ul>
+                <div className="bg-white shadow-lg rounded-lg p-8">
+                    <h2 className="text-3xl font-bold mb-6 text-gray-800">Reservas Activas</h2>
+                    <ul className="space-y-4">
                         {reservations.map((reservation) => (
-                            <li key={reservation.id} className="border-b py-2">
-                                <div>
-                                    <strong>Nombre:</strong> {reservation.name}
+                            <li key={reservation.id} className="bg-gray-50 rounded-lg p-6 shadow-md hover:shadow-lg transition duration-300 ease-in-out">
+                                <div className="flex justify-between items-center">
+                                    <div>
+                                        <p className="text-xl font-semibold text-gray-800 mb-2">{reservation.name}</p>
+                                        <div className="flex space-x-4 text-gray-600">
+                                            <p className="flex items-center"><FaChair className="mr-2" /> Mesa: {reservation.table}</p>
+                                            <p className="flex items-center"><FaUsers className="mr-2" /> Comensales: {reservation.guests}</p>
+                                            <p className="flex items-center"><FaClock className="mr-2" /> Hora: {reservation.time}</p>
+                                            <p className="flex items-center"><FaCalendarAlt className="mr-2" /> Fecha: {reservation.date}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex space-x-3">
+                                        <button
+                                            onClick={() => handleEditReservation(reservation)}
+                                            className="text-blue-600 hover:text-blue-800 transition duration-300 ease-in-out"
+                                        >
+                                            <FaEdit size={20} />
+                                        </button>
+                                        <button
+                                            onClick={() => handleDeleteReservation(reservation.id)}
+                                            className="text-red-600 hover:text-red-800 transition duration-300 ease-in-out"
+                                        >
+                                            <FaTrash size={20} />
+                                        </button>
+                                    </div>
                                 </div>
-                                <div>
-                                    <strong>Mesa:</strong> {reservation.table}
-                                </div>
-                                <div>
-                                    <strong>Capacidad:</strong> {reservation.guests}
-                                </div>
-                                <div>
-                                    <strong>Hora:</strong> {reservation.time}
-                                </div>
-                                <button
-                                    onClick={() => handleEditReservation(reservation)}
-                                    className="text-blue-500 mt-2">Editar</button>
-                                <button
-                                    onClick={() => handleDeleteReservation(reservation.id)}
-                                    className="text-red-500 ml-4 mt-2">Eliminar</button>
                             </li>
                         ))}
                     </ul>
