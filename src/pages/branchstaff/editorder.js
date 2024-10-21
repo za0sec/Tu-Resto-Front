@@ -8,6 +8,7 @@ import OrderCreationPreview from "../../components/OrderCreationPreview";
 import ProductList from "../../components/OrderCreationProductList";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
+import { Toaster, toast } from 'react-hot-toast';
 
 export default function EditOrder() {
     const router = useRouter();
@@ -76,7 +77,8 @@ export default function EditOrder() {
                     if (response.status === 200) {
                         setCategories(response.data);
                     } else {
-                        setError("Error al obtener las categorías");
+                        // setError("Error al obtener las categorías");
+                        toast.error("Error al obtener las categorias. Intenta refrescar la página.");
                     }
                 }
             } catch (error) {
@@ -99,6 +101,7 @@ export default function EditOrder() {
                     setProducts(response.data.products);
                 } else {
                     setError("Error al obtener los productos");
+                    toast.error("Error al obtener los productos. Intenta refrescar la página.");
                 }
             }
         } catch (error) {
@@ -180,10 +183,14 @@ export default function EditOrder() {
             );
 
             if (response.status === 200 || response.status === 204) {
+                toast("Se guardaron los cambios")
                 router.push("/branchstaff/dashboard");
+            } else {
+                toast("Error al actualizar la orden. No se guardaron los cambios")
             }
         } catch (error) {
             console.error("Error al actualizar la orden:", error);
+            toast("Error al actualizar la orden. No se guardaron los cambios")
         }
     };
 
@@ -212,6 +219,10 @@ export default function EditOrder() {
 
     return (
         <div className="min-h-screen bg-gray-100 flex">
+             <Toaster
+                position="bottom-center"
+                reverseOrder={false}
+            />
             <EmployeeNavbar />
 
             {/* Sidebar */}

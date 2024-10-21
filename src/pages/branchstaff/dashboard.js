@@ -9,6 +9,7 @@ import { Fragment } from "react";
 import Cookies from "js-cookie";
 import OrderItemsList from "../../components/OrderItemsList";
 import { FaUtensils, FaRunning } from "react-icons/fa";
+import { Toaster, toast } from 'react-hot-toast';
 export default function BranchDashboard() {
     const [branchId, setBranchId] = useState(null);
     const [orders, setOrders] = useState([]);
@@ -40,8 +41,9 @@ export default function BranchDashboard() {
                 );
                 setOrders(ordersData.data);
             } catch (error) {
+                toast.error("Error al cargar las órdenes")
                 console.error("Error al obtener órdenes:", error);
-                setError("Error al cargar las órdenes");
+                // setError("Error al cargar las órdenes");
             } finally {
                 setLoading(false);
             }
@@ -64,9 +66,11 @@ export default function BranchDashboard() {
                 setOrders((prevOrders) =>
                     prevOrders.filter((order) => order.id !== orderId)
                 );
+                toast("Se cerro la orden y se notifico al cliente.")
             }
         } catch (error) {
             console.error("Error al cerrar la orden:", error);
+            toast.error("Error al cerrar la orden! No se notifico al cliente.")
         }
     };
 
@@ -85,8 +89,9 @@ export default function BranchDashboard() {
             );
             console.log(orderDetails.data.order_type);
         } catch (error) {
+            toast.error("Error al cargar los detalles del pedido.")
             console.error("Error al obtener detalles del pedido:", error);
-            setError("Error al cargar los detalles del pedido");
+            //setError("Error: no se pudo cargar los detalles del pedido");
         }
     };
 
@@ -123,13 +128,15 @@ export default function BranchDashboard() {
             closeModal();
             if (response.status === 201 && response.data.id) {
                 console.log("Orden creada exitosamente:", response.data);
+                toast("Orden creada exitosamente!")
                 router.push(
                     `/branchstaff/editorder?id=${response.data.id}&orderType=${formData.orderType}`
                 );
             }
         } catch (error) {
             console.error("Error al crear la orden:", error);
-            setError("Error al crear la orden");
+            toast.error("Error al crear la orden")
+            // setError("Error al crear la orden");
         }
     };
 
@@ -147,6 +154,7 @@ export default function BranchDashboard() {
                 "Error al actualizar la orden:",
                 error.response?.data || error.message
             );
+            toast.error("Error al actualizar la orden. No se guardaron los cambios.")
         }
     };
 
@@ -160,7 +168,7 @@ export default function BranchDashboard() {
         setOrderToDelete(null);
     };
 
-    const handleDelete = async () => {
+    const   handleDelete = async () => {
         try {
             const response = await apiClient.delete(
                 `/order/${orderType}/${orderToDelete}`
@@ -170,13 +178,15 @@ export default function BranchDashboard() {
                 setOrders(orders.filter((order) => order.id !== orderToDelete));
                 setSelectedOrder(null);
                 closeDeleteDialog();
+                toast("Orden eliminada exitosamente.")
             }
         } catch (error) {
             console.error(
                 "Error al eliminar la orden:",
                 error.response?.data || error.message
             );
-            setError("Error al eliminar la orden");
+            // setError("Error al eliminar la orden");
+            toast.error("Error: No se pudo eliminar la orden.")
         }
     };
 
@@ -203,6 +213,10 @@ export default function BranchDashboard() {
 
     return (
         <div className="min-h-screen bg-gray-100">
+            <Toaster
+                position="bottom-center"
+                reverseOrder={false}
+            />
             <EmployeeNavbar />
             <div className="container mx-auto  mt-20">
                 <div className="flex justify-between items-center mb-2 mt-12">

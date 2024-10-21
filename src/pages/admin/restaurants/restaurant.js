@@ -4,6 +4,7 @@ import AdminNavbar from '../../../components/AdminNavbar';
 import apiClient from '/utils/apiClient';
 import { FaMapMarkerAlt, FaUsers, FaUtensils, FaUserTie, FaBuilding, FaCreditCard } from 'react-icons/fa';
 import withAuth from '../../../components/withAuth';
+import { Toaster, toast } from 'react-hot-toast';
 
 function Restaurant() {
     const [restaurant, setRestaurant] = useState(null);
@@ -61,7 +62,7 @@ function Restaurant() {
             }
         } catch (error) {
             console.error('Error al obtener datos:', error);
-            setError('Error al cargar los datos');
+            setError('Error al cargar los datos. Intenta refrescar la página.');
         } finally {
             setLoading(false);
         }
@@ -83,6 +84,7 @@ function Restaurant() {
             }
         } catch (error) {
             console.error('Error al crear el manager:', error);
+            toast.error('Error al crear el manager. Intenta de nuevo.');
         } finally {
             setIsLoading(false);
         }
@@ -109,6 +111,10 @@ function Restaurant() {
 
     return (
         <div className="bg-gray-50 min-h-screen flex flex-col">
+            <Toaster
+                position="bottom-center"
+                reverseOrder={false}
+            />
             <AdminNavbar />
             <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 mt-16">
                 <div className="relative mb-8">

@@ -5,6 +5,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import Cookies from 'js-cookie';
 import apiClient from '/utils/apiClient';
 import { jwtDecode } from 'jwt-decode';
+import { Toaster, toast } from 'react-hot-toast';
 
 export default function LoginModal({ isOpen, closeModal }) {
     const router = useRouter();
@@ -50,7 +51,8 @@ export default function LoginModal({ isOpen, closeModal }) {
                 setError(errorData.message || 'Error al iniciar sesión');
             }
         } catch (error) {
-            setError('Error de red. Inténtalo de nuevo.');
+            toast.error("Error al iniciar sesion.")
+            setError('Error al iniciar sesion. Verifica que lo datos proporcionados sean correctos.');
         }
     };
 

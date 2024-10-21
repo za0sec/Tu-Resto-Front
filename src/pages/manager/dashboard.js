@@ -13,6 +13,7 @@ import Reservation from '../../components/Reservation';
 import ReservationList from './reservations';
 import NewBranchDialog from './newBranchDialog';
 import ActiveOrders from './dailyOrders';
+import { Toaster, toast } from 'react-hot-toast';
 function Dashboard() {
     const router = useRouter();
     const [firstName, setFirstName] = useState(null);
@@ -96,11 +97,16 @@ function Dashboard() {
             }
         } catch (error) {
             console.error('Error al crear la sucursal:', error);
+            toast.error('Error al crear la sucursal. Inténtalo de nuevo.');
         }
     };
 
     return (
         <div className="bg-gray-100 min-h-screen flex flex-col overflow-auto">
+             <Toaster
+                position="bottom-center"
+                reverseOrder={false}
+            />
             <ManagerNavbar restaurantId={userData?.restaurant?.id} />
             <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 mt-16 mb-24">
                 <div className="bg-white p-6 rounded-lg shadow-lg mb-10">

@@ -8,7 +8,7 @@ import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
 import { FaChevronDown } from "react-icons/fa";
 import withAuth from '../../components/withAuth';
-
+import { Toaster, toast } from 'react-hot-toast';
 
 function Dashboard() {
     const router = useRouter();
@@ -35,7 +35,7 @@ function Dashboard() {
                 }
             } catch (error) {
                 console.error('Error al obtener datos del usuario:', error);
-                setError('Error al cargar los datos del usuario');
+                toast.error('Error al cargar los datos del usuario. Intenta refrescar la pagina.');
             } finally {
                 setLoading(false);
             }
@@ -57,13 +57,15 @@ function Dashboard() {
                     setTotalRestaurants(restaurantsResponse.data.length);
                 } else {
                     setError('Error al obtener los restaurantes');
+                    // toast.error('Error al obtener los restaurantes. Intenta refrescar la pagina.');
                 }
-
+                
                 if (employeesResponse.status === 200) {
                     setTotalEmployees(employeesResponse.data.length);
                     setemployees(employeesResponse.data);
                 } else {
                     setError('Error al obtener los empleados');
+                    // toast.error('Error al obtener los empleados. Intenta refrescar la pagina.');
                 }
             } catch (error) {
                 console.error('Error al obtener datos:', error);
@@ -110,11 +112,16 @@ function Dashboard() {
             }
         } catch (error) {
             console.error('Error al crear el restaurante:', error);
+            toast.error('Error al crear el restaurante. Intenta de nuevo.');
         }
     };
 
     return (
         <div className="bg-gray-100 min-h-screen flex flex-col overflow-auto">
+            <Toaster
+                position="bottom-center"
+                reverseOrder={false}
+            />
             <AdminNavbar />
             <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 mt-24 mb-24">
                 <div className="flex justify-between items-center mb-10">

@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import Table from "@/components/Table";
 import EmployeeNavbar from "@/components/EmployeeNavbar";
 import OrderItemsList from "@/components/OrderItemsList";
-
+import { Toaster, toast } from 'react-hot-toast';
 const Tables = () => {
     const [tables, setTables] = useState([]);
     const gridSizeX = 18;
@@ -29,6 +29,7 @@ const Tables = () => {
             setTables(tablesWithPositions);
         } catch (error) {
             console.error("Error fetching tables:", error);
+            toast.error("Error al obtener las mesas. Inténtalo de nuevo más tarde");
         }
     };
     const fetchOrder = async () => {
@@ -45,6 +46,7 @@ const Tables = () => {
             setSelectedOrder(orderDetails.data);
         } catch (error) {
             console.error("Error fetching order:", error);
+            toast.error("Error al obtener los detalles de la orden")
         }
     };
     
@@ -69,6 +71,7 @@ const Tables = () => {
                 "Error al actualizar la orden:",
                 error.response?.data || error.message
             );
+            toast.error("Error al actualizar la orden. No se guardaron los cambios");
         }
     };
 
@@ -81,6 +84,10 @@ const Tables = () => {
     };
     return (
         <div className="min-h-screen bg-gray-100">
+             <Toaster
+                position="bottom-center"
+                reverseOrder={false}
+            />
             <EmployeeNavbar />
             <div className="container mx-auto mb-3 mt-20">
                 <h1 className="text-4xl font-bold mb-4 text-gray-800">

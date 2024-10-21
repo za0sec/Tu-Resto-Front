@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import config from "/utils/config";
 import React from "react";
 import { FaMobileAlt, FaTabletAlt, FaDesktop } from "react-icons/fa";
+import { Toaster, toast } from 'react-hot-toast';
 
 export default function Home({ token = true }) {
     const router = useRouter();
@@ -47,6 +48,7 @@ export default function Home({ token = true }) {
                     }
                 } catch (error) {
                     console.error("Error al verificar el token:", error);
+                    toast.error("Error al iniciar sesion. Verifica que lo datos proporcionados sean correctos.")
                     Cookies.remove("accessToken");
                     Cookies.remove("refreshToken");
                     Cookies.remove("user_role");
@@ -70,6 +72,10 @@ export default function Home({ token = true }) {
     }
     return (
         <div className="min-h-screen flex flex-col overflow-hidden">
+            <Toaster
+                position="bottom-center"
+                reverseOrder={false}
+            />
             <Navbar openModal={openModal} />
             <div className="relative w-full">
                 {/* Fondo con curvas suaves */}
