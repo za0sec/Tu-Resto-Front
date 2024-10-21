@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import DeleteModal from "../../components/Delete";
 import BranchCard from "../../components/BranchCard";
+import { Toaster, toast } from 'react-hot-toast';
 
 function BranchesPage() {
     const [branches, setBranches] = useState([]);
@@ -95,7 +96,8 @@ function BranchesPage() {
             handleCloseModal();
         } catch (error) {
             console.error("Error saving branch:", error);
-            setError("Error al guardar la sucursal");
+            toast.error("Error al guardar la sucursal. Inténtalo de nuevo más tarde");
+            // setError("Error al guardar la sucursal");
         }
     };
 
@@ -110,7 +112,8 @@ function BranchesPage() {
                 fetchBranches();
             } catch (error) {
                 console.error("Error deleting branch:", error);
-                setError("Error al eliminar la sucursal");
+                toast.error("Error deleting branch. Intentalo de nuevo más tarde");
+                // setError("Error al eliminar la sucursal");
             }
         }
     };
@@ -142,6 +145,10 @@ function BranchesPage() {
 
     return (
         <div className="min-h-screen">
+             <Toaster
+                position="bottom-center"
+                reverseOrder={false}
+            />
             <ManagerNavbar />
             <main className="container mx-auto px-4 py-20">
                 <div className="flex justify-between items-center mb-8">

@@ -4,7 +4,7 @@ import apiClient from '/utils/apiClient';
 import { FaMapMarkerAlt, FaUsers, FaUtensils } from 'react-icons/fa';
 import withAuth from '../../components/withAuth';
 import BranchCard from '../../components/BranchCard';
-
+import { Toaster, toast } from 'react-hot-toast';
 
 function Restaurants() {
     const [restaurants, setRestaurants] = useState([]);
@@ -23,11 +23,11 @@ function Restaurants() {
             if (response.status === 200) {
                 setRestaurants(response.data);
             } else {
-                setError('Error al obtener los restaurantes');
+                setError('Error al obtener los restaurantes. Intenta refrescar la página.');
             }
         } catch (error) {
             console.error('Error al obtener datos:', error);
-            setError('Error al cargar los datos');
+            setError('Error al cargar los datos. Intenta refrescar la página.');
         } finally {
             setLoading(false);
         }
@@ -67,6 +67,7 @@ function Restaurants() {
             }
         } catch (error) {
             console.error('Error al crear el restaurante:', error);
+            toast.error('Error al crear el restaurante.');
         }
     };
 
@@ -126,6 +127,10 @@ function Restaurants() {
 
     return (
         <div className="bg-gray-100 min-h-screen flex flex-col">
+            <Toaster
+                position="top-center"
+                reverseOrder={false}
+            />
             <AdminNavbar />
             <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 mt-16">
                 <div className="flex justify-between items-center mb-8">

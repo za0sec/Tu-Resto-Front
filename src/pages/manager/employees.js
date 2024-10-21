@@ -8,6 +8,7 @@ import { jwtDecode } from "jwt-decode";
 import NewEmployeeDialog from "./newEmployeeDialog";
 import EmployeePreview from "./EmployeePreview";
 import { FaPlus } from "react-icons/fa";
+import { Toaster, toast } from 'react-hot-toast';
 
 function Employees() {
     const [employees, setEmployees] = useState([]);
@@ -126,6 +127,7 @@ function Employees() {
             }
         } catch (error) {
             console.error("Error al crear el empleado:", error);
+            toast.error("Error al crear el empleado. Intentalo de nuevo");
         } finally {
             setIsLoading(false);
         }
@@ -161,6 +163,7 @@ function Employees() {
             }
         } catch (error) {
             console.error("Error al actualizar el empleado:", error);
+            toast.error("Error al actualizar los datos del empleado. Inténtalo de nuevo.");
         }
     };
 
@@ -192,6 +195,10 @@ function Employees() {
 
     return (
         <div className="bg-gray-100 min-h-screen flex flex-col">
+            <Toaster
+                position="bottom-center"
+                reverseOrder={false}
+            />
             <ManagerNavbar />
             <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 mt-20">
                 <div className="flex justify-between items-center mb-6">
