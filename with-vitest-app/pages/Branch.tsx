@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
-import apiClient from "../utils/apiClient";
-import withAuth from "../../src/components/withAuth";
-import ManagerNavbar from "../src/components/ManagerNavbar";
+import apiClient from "../../utils/apiClient";
+import withAuth from "../../../components/withAuth";
+import ManagerNavbar from "../../../components/ManagerNavbar";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
-import DeleteModal from "../src/components/Delete";
-import BranchCard from "../src/components/BranchCard";
+import DeleteModal from "../../../components/Delete";
+import BranchCard from "../../../components/BranchCard";
 
 function BranchesPage() {
     const [branches, setBranches] = useState([]);
