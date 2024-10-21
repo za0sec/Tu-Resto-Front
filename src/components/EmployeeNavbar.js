@@ -10,6 +10,8 @@ import LogOut from './LogOut'
 const navigation = [
     { name: 'Ordenes', href: '/branchstaff/dashboard' },
     { name: 'Mesas & Ordenes', href: '/branchstaff/tables' },
+    { name: 'Reservas', href: '/branchstaff/reservations' },
+
 ];
 
 export default function AdminNavbar() {
