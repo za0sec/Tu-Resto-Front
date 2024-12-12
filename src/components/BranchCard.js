@@ -4,7 +4,8 @@ function BranchCard({
     data,
     onCardClick,
     onDeleteClick,
-    isBranch = true, // Por defecto es una sucursal
+    isBranch = true, 
+    showDelete = true, 
 }) {
     return (
         <div
@@ -46,17 +47,19 @@ function BranchCard({
                 </>
             )}
 
-            <div className="flex justify-end mt-4">
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onDeleteClick(data);
-                    }}
-                    className="text-red-500 hover:text-red-700 bg-red-100 p-2 rounded-full transition duration-300"
-                >
-                    <FaTrash />
-                </button>
-            </div>
+            {showDelete && onDeleteClick && (
+                <div className="flex justify-end mt-4">
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onDeleteClick(data);
+                        }}
+                        className="text-red-500 hover:text-red-700 bg-red-100 p-2 rounded-full transition duration-300"
+                    >
+                        <FaTrash />
+                    </button>
+                </div>
+            )}
         </div>
     );
 }
