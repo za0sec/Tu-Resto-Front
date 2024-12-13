@@ -10,18 +10,12 @@ const apiClient = axios.create({
 });
 
 apiClient.interceptors.request.use(async (config) => {
-    let accessToken = Cookies.get('accessToken');
-
-    if (!accessToken) {
-        accessToken = await refreshAccessToken();
-    }
-
+    const accessToken = Cookies.get('accessToken');
+    
     if (accessToken) {
         config.headers['Authorization'] = `Bearer ${accessToken}`;
     }
-
-    // console.log("access token", accessToken);
-
+    
     return config;
 }, (error) => {
     return Promise.reject(error);
@@ -32,13 +26,19 @@ apiClient.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
-        if (error.response.status === 401 && !originalRequest._retry) {
+        if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
 
-            const newAccessToken = await refreshAccessToken();
-            if (newAccessToken) {
-                originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
-                return apiClient(originalRequest);
+            try {
+                const newAccessToken = await refreshAccessToken();
+                if (newAccessToken) {
+                    originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+                    return apiClient(originalRequest);
+                }
+            } catch (refreshError) {
+                Cookies.remove('accessToken');
+                Cookies.remove('refreshToken');
+                return Promise.reject(refreshError);
             }
         }
 
@@ -47,18 +47,18 @@ apiClient.interceptors.response.use(
 );
 
 async function refreshAccessToken() {
+    const refreshToken = Cookies.get('refreshToken');
+    
+    if (!refreshToken) {
+        throw new Error('No refresh token available');
+    }
+
     try {
-        const refreshToken = Cookies.get('refreshToken');
-        // console.log("Refresh", refreshToken);
-        if (!refreshToken) {
-            console.log('No refresh token available.');
-            return null;
-        }
-
-        const response = await apiClient.post(`/token`, { refreshToken });
-        const { accessToken, refreshToken: newRefreshToken } = response.data;
-
-        console.log("New tokens", accessToken, newRefreshToken);
+        const response = await axios.post(`${config.apiUrl}/auth/refresh`, { 
+            refresh: refreshToken 
+        });
+        
+        const { access: accessToken, refresh: newRefreshToken } = response.data;
 
         Cookies.set('accessToken', accessToken);
         if (newRefreshToken) {
@@ -67,10 +67,7 @@ async function refreshAccessToken() {
 
         return accessToken;
     } catch (error) {
-        console.error('Error refreshing access token:', error);
-        Cookies.remove('accessToken');
-        Cookies.remove('refreshToken');
-        return null;
+        throw error;
     }
 }
 
