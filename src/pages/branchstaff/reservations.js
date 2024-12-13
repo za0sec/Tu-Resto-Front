@@ -10,6 +10,8 @@ const Reservations = () => {
     const [showDialog, setShowDialog] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [selectedReservationId, setSelectedReservationId] = useState(null);
+    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+    const [showAllDates, setShowAllDates] = useState(false);
     const [newReservation, setNewReservation] = useState({
         name: '',
         phone: '',
@@ -22,11 +24,15 @@ const Reservations = () => {
     });
 
     useEffect(() => {
-        fetchReservations();
         fetchTables();
-    }, []);
+        if (showAllDates) {
+            fetchAllReservations();
+        } else {
+            fetchReservationsByDate(selectedDate);
+        }
+    }, [selectedDate, showAllDates]);
 
-    const fetchReservations = async () => {
+    const fetchAllReservations = async () => {
         try {
             const branchId = Cookies.get("user_branch_id");
             const response = await apiClient.get(`/branch/${branchId}/reservations`);
@@ -34,6 +40,18 @@ const Reservations = () => {
             setReservations(sortedReservations);
         } catch (error) {
             console.error("Error al cargar las reservas", error);
+        }
+    };
+
+    const fetchReservationsByDate = async (date) => {
+        try {
+            const branchId = Cookies.get("user_branch_id");
+            const restaurantId = Cookies.get("user_restaurant_id");
+            const response = await apiClient.get(`/reservations/${restaurantId}/branches/${branchId}/${date}`);
+            const sortedReservations = response.data.sort((a, b) => a.time.localeCompare(b.time));
+            setReservations(sortedReservations);
+        } catch (error) {
+            console.error("Error al cargar las reservas por fecha", error);
         }
     };
 
@@ -60,7 +78,11 @@ const Reservations = () => {
                 await apiClient.post("/reservation/create", newReservation);
             }
             setShowDialog(false);
-            fetchReservations();
+            if (showAllDates) {
+                fetchAllReservations();
+            } else {
+                fetchReservationsByDate(selectedDate);
+            }
             resetForm();
         } catch (error) {
             console.error("Error al guardar la reserva", error);
@@ -77,10 +99,20 @@ const Reservations = () => {
     const handleDeleteReservation = async (id) => {
         try {
             await apiClient.delete(`/reservation/${id}`);
-            fetchReservations();
+            if (showAllDates) {
+                fetchAllReservations();
+            } else {
+                fetchReservationsByDate(selectedDate);
+            }
         } catch (error) {
             console.error("Error al eliminar la reserva", error);
         }
+    };
+
+    const handleDateChange = (e) => {
+        const newDate = e.target.value;
+        setSelectedDate(newDate);
+        fetchReservationsByDate(newDate);
     };
 
     const resetForm = () => {
@@ -98,7 +130,7 @@ const Reservations = () => {
         setSelectedReservationId(null);
     };
 
-    const timeOptions = ["20:00:00", "21:30:00", "23:00:00"];
+    const timeOptions = ["12:00", "13:30", "20:00", "22:00"];
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -106,15 +138,36 @@ const Reservations = () => {
             <div className="container mx-auto px-4 mt-20">
                 <h1 className="text-4xl font-bold mb-8 text-gray-800">Gestión de Reservas</h1>
 
-                <button
-                    onClick={() => { 
-                        resetForm();
-                        setShowDialog(true);
-                    }}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full mb-6 transition duration-300 ease-in-out transform hover:scale-105"
-                >
-                    <FaPlus className="inline mr-2" /> Nueva Reserva
-                </button>
+                <div className="flex space-x-4 mb-6">
+                    <button
+                        onClick={() => { 
+                            resetForm();
+                            setShowDialog(true);
+                        }}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full transition duration-300 ease-in-out transform hover:scale-105"
+                    >
+                        <FaPlus className="inline mr-2" /> Nueva Reserva
+                    </button>
+
+                    <div className="flex items-center space-x-4">
+                        <input
+                            type="date"
+                            value={selectedDate}
+                            onChange={handleDateChange}
+                            className="p-2 border rounded-lg"
+                            disabled={showAllDates}
+                        />
+                        <label className="flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                checked={showAllDates}
+                                onChange={(e) => setShowAllDates(e.target.checked)}
+                                className="form-checkbox"
+                            />
+                            <span>Mostrar todas las fechas</span>
+                        </label>
+                    </div>
+                </div>
 
                 {showDialog && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
@@ -206,7 +259,9 @@ const Reservations = () => {
                 )}
 
                 <div className="bg-white shadow-lg rounded-lg p-8">
-                    <h2 className="text-3xl font-bold mb-6 text-gray-800">Reservas Activas</h2>
+                    <h2 className="text-3xl font-bold mb-6 text-gray-800">
+                        {showAllDates ? "Todas las Reservas" : `Reservas para ${selectedDate}`}
+                    </h2>
                     <ul className="space-y-4">
                         {reservations.map((reservation) => (
                             <li key={reservation.id} className="bg-gray-50 rounded-lg p-6 shadow-md hover:shadow-lg transition duration-300 ease-in-out">
