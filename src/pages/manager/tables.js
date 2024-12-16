@@ -244,7 +244,7 @@ const Tables = () => {
             <div className="container mx-auto mt-20">
                 <div className="flex flex-wrap items-center justify-between mb-4">
                     <h1 className="text-4xl font-bold mb-4 text-gray-800">
-                        Table Layout
+                        Disposicion de mesas
                     </h1>
                     <button
                         onClick={addTable}
@@ -281,7 +281,7 @@ const Tables = () => {
                     <div className="bg-white p-6 rounded-lg shadow-md col-span-1">
                         <div className="mb-4">
                             <label className="block text-gray-700 font-bold mb-2">
-                                Table Number
+                                Numero de mesa
                             </label>
                             <input
                                 type="number"
@@ -294,7 +294,7 @@ const Tables = () => {
                         </div>
                         <div className="mb-4">
                             <label className="block text-gray-700 font-bold mb-2">
-                                Capacity
+                                Capacidad
                             </label>
                             <input
                                 type="number"
@@ -307,7 +307,7 @@ const Tables = () => {
                         </div>
                         <div className="mb-4">
                             <label className="block text-gray-700 font-bold mb-2">
-                                Bookable
+                                Reservable
                             </label>
                             <select
                                 value={newTableBookable}
@@ -324,14 +324,14 @@ const Tables = () => {
                         </div>
                         <div className="mb-4">
                             <label className="block text-gray-700 font-bold mb-2">
-                                Table Type
+                                Tipo de mesa
                             </label>
                             <select
                                 value={newTableType}
                                 onChange={(e) => setNewTableType(e.target.value)}
                                 className="w-full px-4 py-2 border rounded-lg"
                             >
-                                <option value="round">Round</option>
+                                <option value="round">Redonda</option>
                                 <option value="rectangular">Rectangular</option>
                             </select>
                         </div>

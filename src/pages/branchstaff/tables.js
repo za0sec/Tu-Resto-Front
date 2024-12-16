@@ -91,7 +91,7 @@ const Tables = () => {
             <EmployeeNavbar />
             <div className="container mx-auto mb-3 mt-20">
                 <h1 className="text-4xl font-bold mb-4 text-gray-800">
-                    Table Layout
+                    Disposicion de mesas
                 </h1>
                 <div className="flex flex-col md:flex-row gap-8 items-start">
                     <div
